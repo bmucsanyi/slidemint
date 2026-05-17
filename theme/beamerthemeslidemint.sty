@@ -1,0 +1,102 @@
+\newif\ifAcademicDarkMode
+\newcommand*{\AcademicApplyPalette}{\lattecolors}
+
+\DeclareOptionBeamer{latte}{\renewcommand*{\AcademicApplyPalette}{\lattecolors}\AcademicDarkModefalse}
+\DeclareOptionBeamer{light}{\renewcommand*{\AcademicApplyPalette}{\lattecolors}\AcademicDarkModefalse}
+\DeclareOptionBeamer{frappe}{\renewcommand*{\AcademicApplyPalette}{\frappecolors}\AcademicDarkModetrue}
+\DeclareOptionBeamer{macchiato}{\renewcommand*{\AcademicApplyPalette}{\macchiatocolors}\AcademicDarkModetrue}
+\DeclareOptionBeamer{mocha}{\renewcommand*{\AcademicApplyPalette}{\mochacolors}\AcademicDarkModetrue}
+\DeclareOptionBeamer{dark}{\renewcommand*{\AcademicApplyPalette}{\frappecolors}\AcademicDarkModetrue}
+\ProcessOptionsBeamer
+
+\usefonttheme{catppuccinacademic}
+\usecolortheme{catppuccinacademic}
+\AcademicApplyPalette
+
+\RequirePackage{tikz}
+
+\useinnertheme{catppuccinacademic}
+\useoutertheme{catppuccinacademic}
+
+\renewcommand{\maketitle}{%
+    \ifbeamer@inframe
+        \titlepage%
+    \else
+        \begin{frame}[plain]
+            \titlepage%
+        \end{frame}%
+    \fi
+}
+
+\RequirePackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=AcademicLink,
+    citecolor=AcademicLink,
+    urlcolor=AcademicExternalLink,
+    filecolor=AcademicExternalLink}
+
+\RequirePackage{contour}
+\RequirePackage[normalem]{ulem}
+
+\renewcommand{\ULdepth}{1.8pt}
+\contourlength{0.8pt}
+
+\renewcommand{\underline}[1]{%
+    \uline{\phantom{#1}}%
+    \llap{\contour{AcademicBase}{#1}}%
+}
+
+\newcommand{\underlinecol}[2][AcademicBase]{%
+    \uline{\phantom{#2}}%
+    \llap{\contour{#1}{#2}}%
+}
+
+\newcommand{\link}[2]{%
+    \href{\detokenize{#1}}{\underline{#2}}%
+}
+
+\newcommand{\srccite}[2]{%
+    \hfill\href{\detokenize{#1}}{\underlinecol[AcademicBase]{#2}}%
+}
+
+\let\AcademicOriginalTextbf\textbf
+\newif\ifAcademicInsideStrong
+\renewcommand{\textbf}[1]{%
+    {%
+        \ifAcademicInsideEmphasis
+            \color{AcademicStrongEmphasis}%
+        \else
+            \color{AcademicStrong}%
+        \fi
+        \AcademicInsideStrongtrue
+        \AcademicOriginalTextbf{#1}%
+    }%
+}
+
+\let\AcademicOriginalTextit\textit
+\newif\ifAcademicInsideEmphasis
+\renewcommand{\textit}[1]{%
+    {%
+        \ifAcademicInsideStrong
+            \color{AcademicStrongEmphasis}%
+        \else
+            \color{AcademicEmphasis}%
+        \fi
+        \AcademicInsideEmphasistrue
+        \AcademicOriginalTextit{#1}%
+    }%
+}
+
+\let\AcademicOriginalEmph\emph
+\renewcommand{\emph}[1]{%
+    {%
+        \ifAcademicInsideStrong
+            \color{AcademicStrongEmphasis}%
+        \else
+            \color{AcademicEmphasis}%
+        \fi
+        \AcademicInsideEmphasistrue
+        \AcademicOriginalEmph{#1}%
+    }%
+}

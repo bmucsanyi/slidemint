@@ -1,0 +1,56 @@
+\mode<presentation>
+
+\setbeamertemplate{navigation symbols}{}
+
+\defbeamertemplate*{frametitle}{catppuccinacademic}[1][left]
+{%
+    \ifbeamercolorempty[bg]{frametitle}{}{\nointerlineskip}%
+    \@tempdima=\textwidth%
+    \advance\@tempdima by\beamer@leftmargin%
+    \advance\@tempdima by\beamer@rightmargin%
+    \begin{beamercolorbox}[sep=0.3cm,#1,wd=\the\@tempdima]{frametitle}
+        \usebeamerfont{frametitle}%
+        \vbox{}\vskip-1ex%
+        \if@tempswa\else\csname beamer@fte#1\endcsname\fi%
+        \parbox{\dimexpr\linewidth-0.6cm\relax}{%
+            \strut%
+            \insertframetitle%
+            \hfill%
+            \ifAcademicDarkMode
+                \smash{\includegraphics[height=1.0em]{graphics/affiliation-symbol-light.pdf}}%
+            \else
+                \smash{\includegraphics[height=1.0em]{graphics/affiliation-symbol-color.pdf}}%
+            \fi
+            \strut%
+        }%
+        \par%
+        {%
+            \ifx\insertframesubtitle\@empty%
+                \else%
+                {%
+                    \usebeamerfont{framesubtitle}\usebeamercolor[fg]{framesubtitle}%
+                    \parbox{\dimexpr\linewidth-0.6cm\relax}{\strut\insertframesubtitle\strut}%
+                    \par%
+                }%
+            \fi
+        }%
+        \vskip-1ex%
+        \if@tempswa\else\vskip-.3cm\fi%
+    \end{beamercolorbox}%
+}
+
+\setbeamertemplate{page number in head/foot}[framenumber]
+
+\defbeamertemplate*{footline}{catppuccinacademic}
+{%
+    \ifbeamer@plainframe\else
+        \begin{beamercolorbox}[wd=\paperwidth,ht=3ex,dp=1.5ex,leftskip=.3cm,rightskip=.3cm,sep=0pt]{footline}
+            \usebeamercolor[fg]{footline}%
+            \textcopyright~B\'{a}lint Mucs\'{a}nyi, 2026.~LinkedIn, Bluesky, GitHub: @bmucsanyi%
+            \hfill%
+            \insertframenumber/\inserttotalframenumber%
+        \end{beamercolorbox}
+    \fi
+}
+
+\mode<all>
