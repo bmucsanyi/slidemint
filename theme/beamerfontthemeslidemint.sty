@@ -1,5 +1,19 @@
 \RequirePackage{iftex}
 
+\newcommand*{\SlidemintUseMathDigitFont}{%
+    \DeclareSymbolFont{slidemintmathdigits}{\encodingdefault}{\familydefault}{\mddefault}{\updefault}%
+    \DeclareMathSymbol{0}{\mathord}{slidemintmathdigits}{`0}%
+    \DeclareMathSymbol{1}{\mathord}{slidemintmathdigits}{`1}%
+    \DeclareMathSymbol{2}{\mathord}{slidemintmathdigits}{`2}%
+    \DeclareMathSymbol{3}{\mathord}{slidemintmathdigits}{`3}%
+    \DeclareMathSymbol{4}{\mathord}{slidemintmathdigits}{`4}%
+    \DeclareMathSymbol{5}{\mathord}{slidemintmathdigits}{`5}%
+    \DeclareMathSymbol{6}{\mathord}{slidemintmathdigits}{`6}%
+    \DeclareMathSymbol{7}{\mathord}{slidemintmathdigits}{`7}%
+    \DeclareMathSymbol{8}{\mathord}{slidemintmathdigits}{`8}%
+    \DeclareMathSymbol{9}{\mathord}{slidemintmathdigits}{`9}%
+}
+
 \newcommand*{\SlidemintUseLuaFonts}{%
     \RequirePackage{fontspec}%
     \newfontfamily{\titlefont}[Scale=MatchUppercase]{Plus Jakarta Sans}%
@@ -15,19 +29,24 @@
         BoldItalicFont={Roboto Condensed Italic},
         Ligatures=TeX,
     ]{Roboto Condensed Light}%
-    \setmonofont[Ligatures=TeX,Scale=0.9]{Roboto Mono}%
+    \setmonofont[
+        ItalicFont={MesloLGS NF Italic},
+        Ligatures=NoCommon,
+        Scale=MatchLowercase,
+    ]{MesloLGS NF}%
     \newfontfamily{\SlidemintCodeFontFamily}[Ligatures=NoCommon]{MesloLGS NF}%
     \newfontfamily{\quotefont}[
         Weight=500,
         ItalicFont={Plus Jakarta Sans Italic},
         ItalicFeatures={Weight=500},
     ]{Plus Jakarta Sans}%
+    \AtBeginDocument{\SlidemintUseMathDigitFont}%
 }
 
 \newcommand*{\SlidemintUseXeFonts}{%
     \RequirePackage{mathspec}%
     \newfontfamily{\titlefont}[Scale=MatchUppercase]{PlusJakartaSans-VariableFont_wght.ttf}%
-    \setallmainfonts(Digits,Latin)[
+    \setallmainfonts(Digits)[
         ItalicFont=RobotoCondensed-LightItalic.otf,
         BoldFont=RobotoCondensed-Regular.otf,
         BoldItalicFont=RobotoCondensed-Italic.otf,
@@ -40,11 +59,10 @@
         Ligatures=TeX,
     ]{RobotoCondensed-Light.otf}%
     \setallmonofonts[
-        ItalicFont=RobotoMono-Italic.otf,
-        BoldFont=RobotoMono-Bold.otf,
-        Ligatures=TeX,
-        Scale=0.9,
-    ]{RobotoMono-Regular.otf}%
+        ItalicFont={MesloLGS NF Italic.ttf},
+        Ligatures=NoCommon,
+        Scale=MatchLowercase,
+    ]{MesloLGS NF Regular.ttf}%
     \newfontfamily{\SlidemintCodeFontFamily}[
         ItalicFont={MesloLGS NF Italic.ttf},
         Ligatures=NoCommon,
