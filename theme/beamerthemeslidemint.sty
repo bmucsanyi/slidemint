@@ -1,22 +1,20 @@
-\newif\ifAcademicDarkMode
+\newif\ifAcademicDarkMode%
 \newcommand*{\AcademicApplyPalette}{\lattecolors}
 
 \DeclareOptionBeamer{latte}{\renewcommand*{\AcademicApplyPalette}{\lattecolors}\AcademicDarkModefalse}
-\DeclareOptionBeamer{light}{\renewcommand*{\AcademicApplyPalette}{\lattecolors}\AcademicDarkModefalse}
 \DeclareOptionBeamer{frappe}{\renewcommand*{\AcademicApplyPalette}{\frappecolors}\AcademicDarkModetrue}
 \DeclareOptionBeamer{macchiato}{\renewcommand*{\AcademicApplyPalette}{\macchiatocolors}\AcademicDarkModetrue}
 \DeclareOptionBeamer{mocha}{\renewcommand*{\AcademicApplyPalette}{\mochacolors}\AcademicDarkModetrue}
-\DeclareOptionBeamer{dark}{\renewcommand*{\AcademicApplyPalette}{\frappecolors}\AcademicDarkModetrue}
-\ProcessOptionsBeamer
+\ProcessOptionsBeamer%
 
-\usefonttheme{catppuccinacademic}
-\usecolortheme{catppuccinacademic}
-\AcademicApplyPalette
+\usefonttheme{slidemint}
+\usecolortheme{slidemint}
+\AcademicApplyPalette%
 
 \RequirePackage{tikz}
 
-\useinnertheme{catppuccinacademic}
-\useoutertheme{catppuccinacademic}
+\useinnertheme{slidemint}
+\useoutertheme{slidemint}
 
 \renewcommand{\maketitle}{%
     \ifbeamer@inframe
@@ -61,42 +59,42 @@
 }
 
 \let\AcademicOriginalTextbf\textbf
-\newif\ifAcademicInsideStrong
+\newif\ifAcademicInsideStrong%
 \renewcommand{\textbf}[1]{%
     {%
-        \ifAcademicInsideEmphasis
+        \ifAcademicInsideEmphasis%
             \color{AcademicStrongEmphasis}%
         \else
             \color{AcademicStrong}%
         \fi
-        \AcademicInsideStrongtrue
+        \AcademicInsideStrongtrue%
         \AcademicOriginalTextbf{#1}%
     }%
 }
 
 \let\AcademicOriginalTextit\textit
-\newif\ifAcademicInsideEmphasis
+\newif\ifAcademicInsideEmphasis%
 \renewcommand{\textit}[1]{%
     {%
-        \ifAcademicInsideStrong
+        \ifAcademicInsideStrong%
             \color{AcademicStrongEmphasis}%
         \else
             \color{AcademicEmphasis}%
         \fi
-        \AcademicInsideEmphasistrue
+        \AcademicInsideEmphasistrue%
         \AcademicOriginalTextit{#1}%
     }%
 }
 
-\let\AcademicOriginalEmph\emph
+\let\AcademicOriginalEmph\emph%
 \renewcommand{\emph}[1]{%
     {%
-        \ifAcademicInsideStrong
+        \ifAcademicInsideStrong%
             \color{AcademicStrongEmphasis}%
         \else
             \color{AcademicEmphasis}%
         \fi
-        \AcademicInsideEmphasistrue
+        \AcademicInsideEmphasistrue%
         \AcademicOriginalEmph{#1}%
     }%
 }

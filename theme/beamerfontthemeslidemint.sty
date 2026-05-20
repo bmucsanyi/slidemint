@@ -1,39 +1,80 @@
 \RequirePackage{iftex}
 
-\ifLuaTeX
-    \RequirePackage{fontspec}
-
-    \newfontfamily{\titlefont}{PlusJakartaSans}[Scale=MatchUppercase]
-
-    \setmainfont{Roboto Condensed Light}[
-        ItalicFont=RobotoCondensed-LightItalic,
-        BoldFont=RobotoCondensed-Regular,
-        BoldItalicFont=RobotoCondensed-Italic,
+\newcommand*{\SlidemintUseLuaFonts}{%
+    \RequirePackage{fontspec}%
+    \newfontfamily{\titlefont}[Scale=MatchUppercase]{Plus Jakarta Sans}%
+    \setmainfont[
+        ItalicFont={Roboto Condensed Light Italic},
+        BoldFont={Roboto Condensed},
+        BoldItalicFont={Roboto Condensed Italic},
         Ligatures=TeX,
-    ]
-    \setsansfont{Roboto Condensed Light}[
-        ItalicFont=RobotoCondensed-LightItalic,
-        BoldFont=RobotoCondensed-Regular,
-        BoldItalicFont=RobotoCondensed-Italic,
+    ]{Roboto Condensed Light}%
+    \setsansfont[
+        ItalicFont={Roboto Condensed Light Italic},
+        BoldFont={Roboto Condensed},
+        BoldItalicFont={Roboto Condensed Italic},
         Ligatures=TeX,
-    ]
-    \setmonofont[Ligatures=TeX,Scale = 0.9]{Roboto Mono}
-    \newfontfamily{\quotefont}{PlusJakartaSans-Medium}
-\else\ifXeTeX
-        \RequirePackage{mathspec}
+    ]{Roboto Condensed Light}%
+    \setmonofont[Ligatures=TeX,Scale=0.9]{Roboto Mono}%
+    \newfontfamily{\SlidemintCodeFontFamily}[Ligatures=NoCommon]{MesloLGS NF}%
+    \newfontfamily{\quotefont}[
+        Weight=500,
+        ItalicFont={Plus Jakarta Sans Italic},
+        ItalicFeatures={Weight=500},
+    ]{Plus Jakarta Sans}%
+}
 
-        \newfontfamily{\titlefont}{PlusJakartaSans}[Scale=MatchUppercase]
+\newcommand*{\SlidemintUseXeFonts}{%
+    \RequirePackage{mathspec}%
+    \newfontfamily{\titlefont}[Scale=MatchUppercase]{PlusJakartaSans-VariableFont_wght.ttf}%
+    \setallmainfonts(Digits,Latin)[
+        ItalicFont=RobotoCondensed-LightItalic.otf,
+        BoldFont=RobotoCondensed-Regular.otf,
+        BoldItalicFont=RobotoCondensed-Italic.otf,
+        Ligatures=TeX,
+    ]{RobotoCondensed-Light.otf}%
+    \setallsansfonts[
+        ItalicFont=RobotoCondensed-LightItalic.otf,
+        BoldFont=RobotoCondensed-Regular.otf,
+        BoldItalicFont=RobotoCondensed-Italic.otf,
+        Ligatures=TeX,
+    ]{RobotoCondensed-Light.otf}%
+    \setallmonofonts[
+        ItalicFont=RobotoMono-Italic.otf,
+        BoldFont=RobotoMono-Bold.otf,
+        Ligatures=TeX,
+        Scale=0.9,
+    ]{RobotoMono-Regular.otf}%
+    \newfontfamily{\SlidemintCodeFontFamily}[
+        ItalicFont={MesloLGS NF Italic.ttf},
+        Ligatures=NoCommon,
+    ]{MesloLGS NF Regular.ttf}%
+    \newfontfamily{\quotefont}[
+        Weight=500,
+        ItalicFont={PlusJakartaSans-Italic-VariableFont_wght.ttf},
+        ItalicFeatures={Weight=500},
+    ]{PlusJakartaSans-VariableFont_wght.ttf}%
+}
 
-        \setallmainfonts(Digits,Latin)[Ligatures=TeX]{Roboto Condensed Light}
-        \setallsansfonts[Ligatures=TeX]{Roboto Condensed Light}
-        \setallmonofonts[Ligatures=TeX,Scale=0.9]{Roboto Mono}
-        \newfontfamily{\quotefont}{PlusJakartaSans-Medium}
+\newcommand*{\SlidemintUsePdfFonts}{%
+    \RequirePackage[T1]{fontenc}%
+    \RequirePackage[sfdefault,light,condensed]{roboto}%
+    \newcommand{\titlefont}{\sffamily}%
+    \newcommand{\SlidemintCodeFontFamily}{%
+        \PackageError{slidemint}{VSCode Catppuccin code blocks require LuaLaTeX or XeLaTeX}{Use LuaLaTeX or XeLaTeX.}%
+    }%
+    \newcommand{\quotefont}{\sffamily}%
+}
+
+\ifLuaTeX%
+    \SlidemintUseLuaFonts%
+\else\ifXeTeX%
+        \SlidemintUseXeFonts%
     \else
-        \RequirePackage[sfdefault,light,condensed]{roboto}
-        \RequirePackage[T1]{fontenc}
-        \newcommand{\titlefont}{\sffamily}
-        \newcommand{\quotefont}{\sffamily}
+        \SlidemintUsePdfFonts%
     \fi\fi
+
+\newcommand*{\SlidemintCodeFont}{\SlidemintCodeFontFamily\fontsize{9.75pt}{15pt}\selectfont}
 
 \setbeamerfont{title}{family=\titlefont,series=\mdseries}
 \setbeamerfont{subtitle}{parent=title,series=\mdseries}
@@ -46,7 +87,12 @@
 %%%%%%%%%%%%%%%
 
 % Block Environments
-\setbeamerfont{block title}{size=\normalsize}
+\setbeamerfont{block body}{}
+\setbeamerfont{block body alerted}{parent=block body}
+\setbeamerfont{block body example}{parent=block body}
+\setbeamerfont{block title}{size=\normalsize,parent={structure,block body}}
+\setbeamerfont{block title alerted}{parent={block title,alerted text}}
+\setbeamerfont{block title example}{parent={block title,example text}}
 
 % Verse, Quotations, Quotes
 \setbeamerfont{quotation}{family=\quotefont}

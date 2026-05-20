@@ -4,7 +4,62 @@
 \newcommand*{\AcademicListBullet}{%
     \tikz[baseline=-0.55ex]{\fill[AcademicListMarker] (0,0) circle[radius=0.15em];}%
 }
-
+\newcommand*{\AcademicRibbonListSpacing}{%
+    \setlength{\topsep}{0pt}%
+    \setlength{\partopsep}{0pt}%
+    \setlength{\parsep}{0pt}%
+    \setlength{\itemsep}{3pt}%
+    \def\@listi{\leftmargin\leftmargini\topsep0pt\partopsep0pt\parsep0pt\itemsep3pt}%
+    \let\@listI\@listi%
+}
+\newcommand*{\SlidemintCodeKeyword}[1]{\textcolor{AcademicKeyword}{#1}}
+\newcommand*{\SlidemintCodeFunction}[1]{\textcolor{AcademicFunction}{{\fontshape{it}\selectfont#1}}}
+\newcommand*{\SlidemintCodeFunctionCall}[1]{\textcolor{AcademicFunction}{#1}}
+\newcommand*{\SlidemintCodePunctuation}[1]{\textcolor{AcademicPunctuation}{#1}}
+\newcommand*{\SlidemintCodeVariable}[1]{\textcolor{AcademicText}{#1}}
+\newcommand*{\SlidemintCodeParameter}[1]{\textcolor{AcademicParameter}{{\fontshape{it}\selectfont#1}}}
+\newcommand*{\SlidemintCodeType}[1]{\textcolor{AcademicType}{{\fontshape{it}\selectfont#1}}}
+\newcommand*{\SlidemintCodeOperator}[1]{\textcolor{AcademicOperator}{#1}}
+\newcommand*{\SlidemintCodeString}[1]{\textcolor{AcademicString}{#1}}
+\newcommand*{\SlidemintCodeIndent}{\hphantom{xxxx}}
+\newenvironment{slidemintcodeblock}{%
+    \par\noindent
+    \begin{beamercolorbox}[wd=\textwidth,sep=.75em,leftskip=.25em,rightskip=.25em]{code block}%
+        \SlidemintCodeFont\usebeamercolor[fg]{code block}\setlength{\parindent}{0pt}\setlength{\parskip}{0pt}\ignorespaces%
+}{%
+        \unskip%
+    \end{beamercolorbox}%
+}
+\newcommand*{\SlidemintBeginAlignedBlockBody}[1]{%
+    \begin{minipage}[t][#1][t]{\linewidth}%
+        \setlength{\parindent}{0pt}%
+        \ignorespaces%
+}
+\newcommand*{\SlidemintEndAlignedBlockBody}{%
+        \unskip%
+    \end{minipage}%
+}
+\newenvironment{alignedblock}[2]{%
+    \begin{block}{\strut#2\strut}%
+    \SlidemintBeginAlignedBlockBody{#1}%
+}{%
+    \SlidemintEndAlignedBlockBody%
+    \end{block}%
+}
+\newenvironment{alignedalertblock}[2]{%
+    \begin{alertblock}{\strut#2\strut}%
+    \SlidemintBeginAlignedBlockBody{#1}%
+}{%
+    \SlidemintEndAlignedBlockBody%
+    \end{alertblock}%
+}
+\newenvironment{alignedexampleblock}[2]{%
+    \begin{exampleblock}{\strut#2\strut}%
+    \SlidemintBeginAlignedBlockBody{#1}%
+}{%
+    \SlidemintEndAlignedBlockBody%
+    \end{exampleblock}%
+}
 \mode<presentation>
 
 \setbeamertemplate{itemize item}{\AcademicListBullet}
@@ -16,26 +71,28 @@
 \setbeamertemplate{enumerate subsubitem}{\textcolor{AcademicListMarker}{\insertsubsubenumlabel.}}
 
 
-\setbeamertemplate{bibliography item}[triangle]
+\setbeamertemplate{bibliography item}{\AcademicListBullet}
 
 \setbeamertemplate{ribbon begin}{%
-    \vspace{.3em}
-    \vbox{}
-    \begin{beamercolorbox}[wd=\paperwidth,colsep*=.3em,center]{ribbon}%
+    \par\vskip\smallskipamount%
+    \noindent\begin{beamercolorbox}[wd=\paperwidth,sep=.65em,leftskip=\dimexpr\beamer@leftmargin-.65em\relax,rightskip=\dimexpr\beamer@rightmargin-.65em\relax]{ribbon}%
         \setbeamercolor{structure}{parent=ribbon structure}%
         \setbeamercolor*{item}{parent=ribbon item}%
         \setbeamercolor*{item projected}{parent=ribbon item projected}%
         \setbeamercolor*{alerted text}{parent=ribbon alerted text}%
-        \begin{minipage}{1.0\textwidth}\noindent%
-            }
-            \setbeamertemplate{ribbon end}{%
-        \end{minipage}%
+        \AcademicRibbonListSpacing%
+        \ignorespaces%
+}
+
+\setbeamertemplate{ribbon end}{%
+        \unskip%
     \end{beamercolorbox}%
+    \vskip\smallskipamount%
 }
 
 \newcommand*{\AcademicTitleGraphic}{%
     \node[anchor=west,xshift=-3mm] at (current page.west) {%
-        \ifAcademicDarkMode
+        \ifAcademicDarkMode%
             \includegraphics[height=\paperheight]{graphics/title-graphic-light.pdf}%
         \else
             \includegraphics[height=\paperheight]{graphics/title-graphic-color.pdf}%

@@ -1,5 +1,7 @@
 \mode<presentation>
 
+\pdfstringdefDisableCommands{\def\translate#1{#1}}
+
 \setbeamertemplate{navigation symbols}{}
 
 \defbeamertemplate*{frametitle}{catppuccinacademic}[1][left]
@@ -16,7 +18,7 @@
             \strut%
             \insertframetitle%
             \hfill%
-            \ifAcademicDarkMode
+            \ifAcademicDarkMode%
                 \smash{\includegraphics[height=1.0em]{graphics/affiliation-symbol-light.pdf}}%
             \else
                 \smash{\includegraphics[height=1.0em]{graphics/affiliation-symbol-color.pdf}}%
@@ -38,6 +40,8 @@
         \if@tempswa\else\vskip-.3cm\fi%
     \end{beamercolorbox}%
 }
+
+\setbeamertemplate{frametitle continuation}{\romannumeral\insertcontinuationcount}
 
 \setbeamertemplate{page number in head/foot}[framenumber]
 
