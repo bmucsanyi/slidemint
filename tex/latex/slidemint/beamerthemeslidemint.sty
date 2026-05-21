@@ -1,0 +1,155 @@
+\RequirePackage{iftex}
+\ifLuaTeX
+\else
+    \PackageError{slidemint}{Slidemint requires LuaLaTeX}{Compile with lualatex.}%
+\fi
+
+\newif\ifSlidemintDarkMode%
+\newcommand*{\SlidemintApplyPalette}{\SlidemintLatteColors}
+\newcommand*{\SlidemintUseLatteMintedStyle}{\setminted{style=catppuccin-latte}}
+\newcommand*{\SlidemintUseFrappeMintedStyle}{\setminted{style=catppuccin-frappe}}
+\newcommand*{\SlidemintUseMacchiatoMintedStyle}{\setminted{style=catppuccin-macchiato}}
+\newcommand*{\SlidemintUseMochaMintedStyle}{\setminted{style=catppuccin-mocha}}
+\newcommand*{\SlidemintApplyMintedStyle}{\SlidemintUseLatteMintedStyle}
+\newcommand*{\slidemintfigminttheme}{latte}
+\newcommand*{\slidemintfooterleft}{}
+
+\ExplSyntaxOn
+\tl_new:N \l_slidemint_theme_palette_tl
+\cs_new_protected:Npn \slidemint_theme_select_palette:n #1
+  {
+    \tl_set:Nn \l_slidemint_theme_palette_tl {#1}
+    \tl_remove_all:Nn \l_slidemint_theme_palette_tl { ~ }
+    \str_case:VnF \l_slidemint_theme_palette_tl
+      {
+        { latte }
+          {
+            \cs_gset:Npn \slidemintfigminttheme { latte }
+            \cs_gset_protected:Npn \SlidemintApplyPalette { \SlidemintLatteColors }
+            \cs_gset_eq:NN \SlidemintApplyMintedStyle \SlidemintUseLatteMintedStyle
+            \SlidemintDarkModefalse
+          }
+        { frappe }
+          {
+            \cs_gset:Npn \slidemintfigminttheme { frappe }
+            \cs_gset_protected:Npn \SlidemintApplyPalette { \SlidemintFrappeColors }
+            \cs_gset_eq:NN \SlidemintApplyMintedStyle \SlidemintUseFrappeMintedStyle
+            \SlidemintDarkModetrue
+          }
+        { macchiato }
+          {
+            \cs_gset:Npn \slidemintfigminttheme { macchiato }
+            \cs_gset_protected:Npn \SlidemintApplyPalette { \SlidemintMacchiatoColors }
+            \cs_gset_eq:NN \SlidemintApplyMintedStyle \SlidemintUseMacchiatoMintedStyle
+            \SlidemintDarkModetrue
+          }
+        { mocha }
+          {
+            \cs_gset:Npn \slidemintfigminttheme { mocha }
+            \cs_gset_protected:Npn \SlidemintApplyPalette { \SlidemintMochaColors }
+            \cs_gset_eq:NN \SlidemintApplyMintedStyle \SlidemintUseMochaMintedStyle
+            \SlidemintDarkModetrue
+          }
+      }
+      {
+        \PackageError { slidemint } { Unknown~palette~'#1' } { Use~latte,~frappe,~macchiato,~or~mocha. }
+      }
+  }
+\NewDocumentCommand \SlidemintSelectPalette { m }
+  { \slidemint_theme_select_palette:n {#1} }
+\ExplSyntaxOff
+
+\DeclareOptionBeamer{palette}{\SlidemintSelectPalette{#1}}
+\DeclareOptionBeamer{latte}{\SlidemintSelectPalette{latte}}
+\DeclareOptionBeamer{frappe}{\SlidemintSelectPalette{frappe}}
+\DeclareOptionBeamer{macchiato}{\SlidemintSelectPalette{macchiato}}
+\DeclareOptionBeamer{mocha}{\SlidemintSelectPalette{mocha}}
+\ProcessOptionsBeamer%
+
+\RequirePackage[authoryear,round]{natbib}
+\setcitestyle{authoryear,round,aysep={,},yysep={;},notesep={, }}
+\setlength{\bibsep}{0.45\baselineskip}
+\renewcommand*{\bibfont}{\footnotesize}
+
+\usefonttheme{slidemint}
+\usecolortheme{slidemint}
+\SlidemintApplyPalette%
+
+\RequirePackage{tikz}
+
+\pgfkeys{
+    /slidemint/.is family,
+    /slidemint,
+    footer-left/.store in=\slidemintfooterleft,
+}
+\newcommand*{\slidemintsetup}[1]{\pgfkeys{/slidemint/.cd,#1}}
+
+\newcommand*{\SlidemintApplyFigmintStyle}{%
+    \@ifpackageloaded{figmint}{%
+        \figmintsettheme{\slidemintfigminttheme}%
+        \figmintset{secondary font=\scriptsize}%
+        \pgfplotsset{figmint/font/.append style={every node near coord/.append style={font=\figmintsecondaryfont}}}%
+    }{}%
+}
+
+\useinnertheme{slidemint}
+\useoutertheme{slidemint}
+\AddToHook{package/figmint/after}{\SlidemintApplyFigmintStyle}
+\SlidemintApplyFigmintStyle
+
+\renewcommand{\maketitle}{%
+    \ifbeamer@inframe
+        \titlepage%
+    \else
+        \begin{frame}[plain]
+            \titlepage%
+        \end{frame}%
+    \fi
+}
+
+\RequirePackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=SlidemintLink,
+    citecolor=SlidemintLink,
+    urlcolor=SlidemintExternalLink,
+    filecolor=SlidemintExternalLink}
+
+\newif\ifSlidemintInsideStrong%
+\newif\ifSlidemintInsideEmphasis%
+
+\NewDocumentCommand \SlidemintTextbf { m } {%
+    {%
+        \ifSlidemintInsideEmphasis%
+            \color{SlidemintStrongEmphasis}%
+        \else
+            \color{SlidemintStrong}%
+        \fi
+        \SlidemintInsideStrongtrue%
+        \textbf{#1}%
+    }%
+}
+
+\NewDocumentCommand \SlidemintTextit { m } {%
+    {%
+        \ifSlidemintInsideStrong%
+            \color{SlidemintStrongEmphasis}%
+        \else
+            \color{SlidemintEmphasis}%
+        \fi
+        \SlidemintInsideEmphasistrue%
+        \textit{#1}%
+    }%
+}
+
+\NewDocumentCommand \SlidemintEmph { m } {%
+    {%
+        \ifSlidemintInsideStrong%
+            \color{SlidemintStrongEmphasis}%
+        \else
+            \color{SlidemintEmphasis}%
+        \fi
+        \SlidemintInsideEmphasistrue%
+        \emph{#1}%
+    }%
+}

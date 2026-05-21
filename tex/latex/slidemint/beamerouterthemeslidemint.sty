@@ -4,7 +4,7 @@
 
 \setbeamertemplate{navigation symbols}{}
 
-\defbeamertemplate*{frametitle}{catppuccinacademic}[1][left]
+\defbeamertemplate*{frametitle}{slidemint}[1][left]
 {%
     \ifbeamercolorempty[bg]{frametitle}{}{\nointerlineskip}%
     \@tempdima=\textwidth%
@@ -17,12 +17,6 @@
         \parbox{\dimexpr\linewidth-0.6cm\relax}{%
             \strut%
             \insertframetitle%
-            \hfill%
-            \ifAcademicDarkMode%
-                \smash{\includegraphics[height=1.0em]{graphics/affiliation-symbol-light.pdf}}%
-            \else
-                \smash{\includegraphics[height=1.0em]{graphics/affiliation-symbol-color.pdf}}%
-            \fi
             \strut%
         }%
         \par%
@@ -41,16 +35,16 @@
     \end{beamercolorbox}%
 }
 
-\setbeamertemplate{frametitle continuation}{\romannumeral\insertcontinuationcount}
+\setbeamertemplate{frametitle continuation}{}
 
 \setbeamertemplate{page number in head/foot}[framenumber]
 
-\defbeamertemplate*{footline}{catppuccinacademic}
+\defbeamertemplate*{footline}{slidemint}
 {%
     \ifbeamer@plainframe\else
         \begin{beamercolorbox}[wd=\paperwidth,ht=3ex,dp=1.5ex,leftskip=.3cm,rightskip=.3cm,sep=0pt]{footline}
             \usebeamercolor[fg]{footline}%
-            \textcopyright~B\'{a}lint Mucs\'{a}nyi, 2026.~LinkedIn, Bluesky, GitHub: @bmucsanyi%
+            \slidemintfooterleft%
             \hfill%
             \insertframenumber/\inserttotalframenumber%
         \end{beamercolorbox}

@@ -1,0 +1,34 @@
+\documentclass[notheorems]{beamer}
+\usetheme[latte]{slidemint}
+\usepackage{macromint}
+\usepackage{figmint}
+
+\slidemintsetup{
+  footer-left = {\textcopyright~Author, 2026}
+}
+
+\title{Slidemint Check}
+\author{Author}
+\date{2026}
+
+\begin{document}
+
+\maketitle
+
+\begin{frame}[fragile]
+  \frametitle{Notation}
+  \framesubtitle{Frame subtitle}
+
+  \[
+    \set{x \in \nR^d \where \norm{x} \leq 1}
+    \quad
+    \gradient[\btheta]{\cL}
+  \]
+
+  \begin{minted}{python}
+def loss(theta):
+    return norm(theta)
+  \end{minted}
+\end{frame}
+
+\end{document}

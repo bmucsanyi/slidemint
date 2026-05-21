@@ -1,0 +1,140 @@
+\RequirePackage[cachedir=_minted-\jobname]{minted}
+\RequirePackage{tikz}
+
+\newenvironment{ribbon}{\usebeamertemplate{ribbon begin}}{\usebeamertemplate{ribbon end}}
+\newcommand*{\SlidemintListBullet}{%
+    \tikz[baseline=-0.55ex]{\fill[SlidemintListMarker] (0,0) circle[radius=0.15em];}%
+}
+\newcommand*{\SlidemintRibbonListSpacing}{%
+    \setlength{\topsep}{0pt}%
+    \setlength{\partopsep}{0pt}%
+    \setlength{\parsep}{0pt}%
+    \setlength{\itemsep}{3pt}%
+    \def\@listi{\leftmargin\leftmargini\topsep0pt\partopsep0pt\parsep0pt\itemsep3pt}%
+    \let\@listI\@listi%
+}
+\setminted{
+    fontsize=\SlidemintCodeFont,
+    breaklines,
+    autogobble,
+    bgcolor=SlidemintCodeBody,
+    bgcolorpadding=.75em
+}
+\setmintedinline{
+    bgcolorpadding=0pt
+}
+\SlidemintApplyMintedStyle
+\newcommand*{\SlidemintBeginAlignedBlockBody}[1]{%
+    \begin{minipage}[t][#1][t]{\linewidth}%
+        \setlength{\parindent}{0pt}%
+        \ignorespaces%
+}
+\newcommand*{\SlidemintEndAlignedBlockBody}{%
+        \unskip%
+    \end{minipage}%
+}
+\newenvironment{alignedblock}[2]{%
+    \begin{block}{\strut#2\strut}%
+    \SlidemintBeginAlignedBlockBody{#1}%
+}{%
+    \SlidemintEndAlignedBlockBody%
+    \end{block}%
+}
+\newenvironment{alignedalertblock}[2]{%
+    \begin{alertblock}{\strut#2\strut}%
+    \SlidemintBeginAlignedBlockBody{#1}%
+}{%
+    \SlidemintEndAlignedBlockBody%
+    \end{alertblock}%
+}
+\newenvironment{alignedexampleblock}[2]{%
+    \begin{exampleblock}{\strut#2\strut}%
+    \SlidemintBeginAlignedBlockBody{#1}%
+}{%
+    \SlidemintEndAlignedBlockBody%
+    \end{exampleblock}%
+}
+\mode<presentation>
+
+\setbeamertemplate{itemize item}{\SlidemintListBullet}
+\setbeamertemplate{itemize subitem}{\SlidemintListBullet}
+\setbeamertemplate{itemize subsubitem}{\SlidemintListBullet}
+
+\setbeamertemplate{enumerate item}{\textcolor{SlidemintListMarker}{\insertenumlabel.}}
+\setbeamertemplate{enumerate subitem}{\textcolor{SlidemintListMarker}{\insertsubenumlabel.}}
+\setbeamertemplate{enumerate subsubitem}{\textcolor{SlidemintListMarker}{\insertsubsubenumlabel.}}
+
+\setbeamertemplate{frametitle continuation}{}
+
+\setbeamertemplate{bibliography item}{}
+\setbeamertemplate{bibliography entry title}{\space}
+\setbeamertemplate{bibliography entry location}{\space}
+\setbeamertemplate{bibliography entry note}{\space}
+
+\setbeamertemplate{ribbon begin}{%
+    \par\vskip\smallskipamount%
+    \noindent\begin{beamercolorbox}[wd=\paperwidth,sep=.65em,leftskip=\dimexpr\beamer@leftmargin-.65em\relax,rightskip=\dimexpr\beamer@rightmargin-.65em\relax]{ribbon}%
+        \setbeamercolor{structure}{parent=ribbon structure}%
+        \setbeamercolor*{item}{parent=ribbon item}%
+        \setbeamercolor*{item projected}{parent=ribbon item projected}%
+        \setbeamercolor*{alerted text}{parent=ribbon alerted text}%
+        \SlidemintRibbonListSpacing%
+        \ignorespaces%
+}
+
+\setbeamertemplate{ribbon end}{%
+        \unskip%
+    \end{beamercolorbox}%
+    \vskip\smallskipamount%
+}
+
+\defbeamertemplate*{section page}{slidemint}
+{
+    \begin{tikzpicture}[remember picture,overlay]
+        \node[anchor=center] at (current page.center) {%
+            \begin{minipage}{\textwidth}%
+                \centering
+                {\usebeamerfont{title}%
+                \hypersetup{linkcolor=SlidemintHeading}\textcolor{SlidemintHeading}{\insertsection}}\par
+            \end{minipage}%
+        };
+    \end{tikzpicture}
+}
+
+\defbeamertemplate*{title page}{slidemint}[1][]
+{
+    \begin{tikzpicture}[remember picture,overlay]
+        \node[anchor=center] at (current page.center) {%
+            \begin{minipage}[c][\dimexpr\paperheight-0.1062\paperwidth-2em\relax][c]{\textwidth}
+                \centering
+                {\usebeamerfont{title}\usebeamercolor[fg]{title}\inserttitle\par}%
+                \ifx\insertsubtitle\@empty%
+                \else%
+                    \vskip0.25em%
+                    {\usebeamerfont{subtitle}\usebeamercolor[fg]{subtitle}\insertsubtitle\par}%
+                \fi%
+                \ifx\insertauthor\@empty%
+                \else%
+                    \vskip.5em\par
+                    {\usebeamerfont{author}\usebeamercolor[fg]{author}\insertauthor\par}%
+                \fi%
+                \ifx\insertinstitute\@empty%
+                \else%
+                    \vskip.5em\par
+                    {\usebeamerfont{institute}\usebeamercolor[fg]{institute}\insertinstitute\par}%
+                    \vskip.3em\par
+                \fi%
+                \vskip.5em\par
+                {\usebeamerfont{date}\usebeamercolor[fg]{date}\insertdate\par}%
+                \ifx\inserttitlegraphic\@empty%
+                \else%
+                    \vskip.5em\par
+                    {\usebeamercolor[fg]{titlegraphic}\inserttitlegraphic\par}%
+                \fi%
+                \vfill
+            \end{minipage}
+        };
+    \end{tikzpicture}
+}
+
+\mode<all>

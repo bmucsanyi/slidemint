@@ -1,0 +1,92 @@
+\RequirePackage{iftex}
+
+\ifLuaTeX
+\else
+    \PackageError{slidemint}{Slidemint requires LuaLaTeX}{Compile with lualatex.}%
+\fi
+
+\RequirePackage{fontspec}
+\RequirePackage{mathtools}
+% Mathtools is loaded first; unicode-math owns the documented handoff.
+\RequirePackage[warnings-off={mathtools-colon,mathtools-overbracket}]{unicode-math}
+
+\newfontfamily{\SlidemintTitleFontFamily}[
+    Scale=MatchUppercase,
+    ItalicFont={Plus Jakarta Sans Italic},
+    BoldFont={Plus Jakarta Sans},
+    BoldFeatures={Weight=700},
+    BoldItalicFont={Plus Jakarta Sans Italic},
+    BoldItalicFeatures={Weight=700},
+]{Plus Jakarta Sans}
+
+\setmainfont[
+    ItalicFont={Roboto Condensed Light Italic},
+    BoldFont={Roboto Condensed},
+    BoldItalicFont={Roboto Condensed Italic},
+    Ligatures=TeX,
+]{Roboto Condensed Light}
+
+\setsansfont[
+    ItalicFont={Roboto Condensed Light Italic},
+    BoldFont={Roboto Condensed},
+    BoldItalicFont={Roboto Condensed Italic},
+    Ligatures=TeX,
+]{Roboto Condensed Light}
+
+\setmonofont[
+    ItalicFont={MesloLGS NF Italic},
+    BoldFont={MesloLGS NF Bold},
+    BoldItalicFont={MesloLGS NF Bold Italic},
+    Ligatures=NoCommon,
+    Scale=MatchLowercase,
+]{MesloLGS NF}
+
+\newfontfamily{\SlidemintCodeFontFamily}[
+    ItalicFont={MesloLGS NF Italic},
+    BoldFont={MesloLGS NF Bold},
+    BoldItalicFont={MesloLGS NF Bold Italic},
+    Ligatures=NoCommon,
+]{MesloLGS NF}
+
+\newfontfamily{\SlidemintQuoteFontFamily}[
+    Weight=500,
+    ItalicFont={Plus Jakarta Sans Italic},
+    ItalicFeatures={Weight=500},
+    BoldFont={Plus Jakarta Sans},
+    BoldFeatures={Weight=700},
+    BoldItalicFont={Plus Jakarta Sans Italic},
+    BoldItalicFeatures={Weight=700},
+]{Plus Jakarta Sans}
+
+\setmathfont{Latin Modern Math}[BoldFont={Latin Modern Math}]
+\setmathfont[
+    BoldFont={Roboto Condensed},
+    range=up/{num},
+]{Roboto Condensed Light}
+
+\newcommand*{\SlidemintCodeFont}{\SlidemintCodeFontFamily\fontsize{9.75pt}{15pt}\selectfont}
+
+\setbeamerfont{title}{family=\SlidemintTitleFontFamily,series=\mdseries}
+\setbeamerfont{subtitle}{parent=title,series=\mdseries}
+\setbeamerfont{author}{parent=subtitle,series=\mdseries}
+\setbeamerfont{institute}{parent=subtitle,series=\mdseries}
+\setbeamerfont{date}{parent=subtitle,series=\mdseries}
+
+% Block environments
+\setbeamerfont{block body}{}
+\setbeamerfont{block body alerted}{parent=block body}
+\setbeamerfont{block body example}{parent=block body}
+\setbeamerfont{block title}{size=\normalsize,parent={structure,block body}}
+\setbeamerfont{block title alerted}{parent={block title,alerted text}}
+\setbeamerfont{block title example}{parent={block title,example text}}
+
+% Verse, quotations, quotes
+\setbeamerfont{quotation}{family=\SlidemintQuoteFontFamily}
+\setbeamerfont{quote}{family=\SlidemintQuoteFontFamily}
+
+% Bibliography
+\setbeamerfont{bibliography item}{size=\footnotesize}
+\setbeamerfont{bibliography entry author}{size=\footnotesize,series=\mdseries}
+\setbeamerfont{bibliography entry title}{size=\footnotesize,series=\mdseries}
+\setbeamerfont{bibliography entry location}{size=\footnotesize,series=\mdseries}
+\setbeamerfont{bibliography entry note}{size=\footnotesize,series=\mdseries}

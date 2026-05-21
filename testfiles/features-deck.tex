@@ -1,0 +1,105 @@
+\documentclass[notheorems]{beamer}
+\usetheme[mocha]{slidemint}
+\usepackage{macromint}
+\usepackage{figmint}
+
+\slidemintsetup{
+  footer-left = {\textcopyright~Author, 2026}
+}
+
+\title{Feature Check}
+\subtitle{Title subtitle}
+\author{Author}
+\institute{Institute}
+\date{2026}
+
+\begin{document}
+
+\typeout{SLIDEMINT_FIGMINT_THEME theme=\figminttheme}
+
+\maketitle
+
+\section{Section Check}
+
+\begin{frame}
+  \frametitle{Text and Lists}
+  \framesubtitle{Subtitle survives}
+
+  \begin{itemize}
+    \item \SlidemintTextbf{Strong text} and \SlidemintEmph{emphasis} share the theme colors.
+    \item \SlidemintTextit{Italic text} keeps the selected font shape.
+  \end{itemize}
+
+  \begin{enumerate}
+    \item First numbered item.
+    \item Second numbered item.
+  \end{enumerate}
+
+  \begin{description}
+    \item[GPU] Description label.
+    \item[CPU] Description label with \href{https://example.org}{link text}.
+  \end{description}
+
+  \begin{ribbon}
+    \begin{itemize}
+      \item Ribbon item.
+      \item \alert{Ribbon alert}.
+    \end{itemize}
+  \end{ribbon}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Blocks and Code}
+  \framesubtitle{Theme environments}
+
+  \begin{block}{Block}
+    Normal block body.
+  \end{block}
+
+  \begin{alertblock}{Alert Block}
+    Alert block body.
+  \end{alertblock}
+
+  \begin{exampleblock}{Example Block}
+    Example block body.
+  \end{exampleblock}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Math and Code}
+  \framesubtitle{Macromint and code colors}
+
+  \[
+    \set{x \in \nR^3 \suchthat \norm{x} = 1}
+    \quad
+    \gradient[\btheta]{\cL} + 123
+  \]
+
+  \begin{minted}{python}
+def loss(theta):
+    return norm(theta)
+  \end{minted}
+
+  \begin{minted}{text}
+plain text code
+  \end{minted}
+
+  Inline code uses \mintinline{bash}|rsync| inside text.
+\end{frame}
+
+\begin{frame}
+  \frametitle{Figures}
+  \framesubtitle{Figmint follows the slide palette}
+
+  \begin{figmintfigure}
+    \begin{axis}[
+      xmin=0, xmax=2,
+      ymin=0, ymax=1,
+      nodes near coords,
+    ]
+      \addplot+[figmint bar] coordinates {(0,0.35) (1,0.65) (2,0.50)};
+    \end{axis}
+  \end{figmintfigure}
+\end{frame}
+
+\end{document}

@@ -1,0 +1,28 @@
+\documentclass[notheorems]{beamer}
+\usetheme[latte]{slidemint}
+
+\slidemintsetup{
+  footer-left = {\textcopyright~Author, 2026}
+}
+
+\title{Citation Check}
+\author{Author}
+\date{2026}
+
+\begin{document}
+
+\maketitle
+
+\begin{frame}
+  \frametitle{Natbib Citations}
+  Parenthetical citations print as author-year citations \citep{mucsanyi2026slidemint}.
+  Textual citations also work: \citet{mucsanyi2026slidemint} describe the slide theme.
+\end{frame}
+
+\begin{frame}[allowframebreaks]
+  \frametitle{References}
+  \bibliographystyle{plainnat}
+  \bibliography{testfiles/references}
+\end{frame}
+
+\end{document}
