@@ -109,7 +109,10 @@ local function compile_test(name)
     "",
   }, ":")
   local path = "./.venv/bin:" .. os.getenv("PATH")
-  local environment = "env TEXINPUTS=" .. quote(texinputs) .. " PATH=" .. quote(path)
+  local environment = "env TEXINPUTS=" .. quote(texinputs)
+    .. " TEXMFVAR=" .. quote("build/texmf-var")
+    .. " TEXMFCACHE=" .. quote("build/texmf-var")
+    .. " PATH=" .. quote(path)
   local tex = environment
     .. " lualatex -halt-on-error -interaction=nonstopmode -output-directory=build "
     .. quote("testfiles/" .. name .. ".tex")
@@ -129,7 +132,7 @@ local function compile_test(name)
 end
 
 local function slidemint_check()
-  if run("create build directory", "mkdir -p build") ~= 0 then
+  if run("create build directory", "mkdir -p build/texmf-var") ~= 0 then
     return 1
   end
   for _, name in ipairs(tests) do

@@ -1,3 +1,6 @@
+\NeedsTeXFormat{LaTeX2e}[2020-10-01]
+\ProvidesPackage{beamerinnerthemeslidemint}[2026-05-25 v0.1.0 Slidemint inner theme]
+
 \RequirePackage[cachedir=_minted-\jobname]{minted}
 \RequirePackage{tikz}
 
@@ -73,7 +76,8 @@
 
 \setbeamertemplate{ribbon begin}{%
     \par\vskip\smallskipamount%
-    \noindent\begin{beamercolorbox}[wd=\paperwidth,sep=.65em,leftskip=\dimexpr\beamer@leftmargin-.65em\relax,rightskip=\dimexpr\beamer@rightmargin-.65em\relax]{ribbon}%
+    \noindent\begin{beamercolorbox}[wd=\paperwidth,sep=0pt,vmode,leftskip=\beamer@leftmargin,rightskip=\beamer@rightmargin]{ribbon}%
+        \vskip.70em%
         \setbeamercolor{structure}{parent=ribbon structure}%
         \setbeamercolor*{item}{parent=ribbon item}%
         \setbeamercolor*{item projected}{parent=ribbon item projected}%
@@ -84,6 +88,7 @@
 
 \setbeamertemplate{ribbon end}{%
         \unskip%
+        \vskip.65em%
     \end{beamercolorbox}%
     \vskip\smallskipamount%
 }

@@ -1,3 +1,6 @@
+\NeedsTeXFormat{LaTeX2e}[2020-10-01]
+\ProvidesPackage{beamerthemeslidemint}[2026-05-25 v0.1.0 Beamer theme for visual slide decks]
+
 \RequirePackage{iftex}
 \ifLuaTeX
 \else
@@ -88,7 +91,6 @@
     \@ifpackageloaded{figmint}{%
         \figmintsettheme{\slidemintfigminttheme}%
         \figmintset{height to width ratio=0.5625}%
-        \pgfplotsset{figmint/font/.append style={every node near coord/.append style={font=\figmintsecondaryfont}}}%
     }{}%
 }
 
