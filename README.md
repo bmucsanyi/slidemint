@@ -5,7 +5,14 @@
 ## Requirements
 
 Compile decks with LuaLaTeX. Install the Plus Jakarta Sans, Roboto Condensed,
-MesloLGS NF, and Latin Modern Math font families.
+MesloLGS NF, and Noto Sans Math font families.
+
+Noto Sans Math ships bold math alphabets inside `NotoSansMath-Regular.otf`.
+Slidemint therefore sets `\setmathfont{Noto Sans Math}` without a separate
+`BoldFont` option.
+
+Slidemint owns slide math fonts. Use `macromint` for slide notation macros; use
+`papermint` only in papers.
 
 The theme uses `fontspec`, `unicode-math`, and `minted` v3. Code highlighting
 uses the Catppuccin Pygments styles. Put a Python environment containing
@@ -37,7 +44,7 @@ from their own repositories if your deck loads them.
 ## Usage
 
 ```tex
-\documentclass[notheorems]{beamer}
+\documentclass[notheorems,aspectratio=169]{beamer}
 \usetheme[palette = latte]{slidemint}
 \usepackage{macromint}
 \usepackage{figmint}

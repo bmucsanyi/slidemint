@@ -1,4 +1,4 @@
-\documentclass[notheorems]{beamer}
+\documentclass[notheorems,aspectratio=169]{beamer}
 \usetheme[mocha]{slidemint}
 \usepackage{macromint}
 \usepackage{figmint}
@@ -13,9 +13,23 @@
 \institute{Institute}
 \date{2026}
 
+\makeatletter
+\newcommand*{\SlidemintPrintFontSize}[2]{%
+  \begingroup
+    #2%
+    \typeout{SLIDEMINT_FIGMINT_FONT name=#1;size=\f@size}%
+  \endgroup
+}
+\makeatother
+
 \begin{document}
 
 \typeout{SLIDEMINT_FIGMINT_THEME theme=\figminttheme}
+\typeout{SLIDEMINT_ASPECT_RATIO width=\the\paperwidth;height=\the\paperheight}
+\typeout{SLIDEMINT_FIGMINT_RATIO value=\figmintheighttowidthratio}
+\SlidemintPrintFontSize{caption}{\usebeamerfont{caption}}
+\SlidemintPrintFontSize{primary}{\figmintprimaryfont}
+\SlidemintPrintFontSize{secondary}{\figmintsecondaryfont}
 
 \maketitle
 

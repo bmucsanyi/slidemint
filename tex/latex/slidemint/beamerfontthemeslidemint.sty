@@ -8,7 +8,14 @@
 \RequirePackage{fontspec}
 \RequirePackage{mathtools}
 % Mathtools is loaded first; unicode-math owns the documented handoff.
-\RequirePackage[warnings-off={mathtools-colon,mathtools-overbracket}]{unicode-math}
+\@ifpackageloaded{unicode-math}
+    {%
+        \PackageError{slidemint}
+            {Slidemint must load unicode-math itself}
+            {Load slidemint before packages that load unicode-math. Use macromint, not papermint, in slide decks.}%
+    }
+    {}
+\RequirePackage[warnings-off={mathtools-colon,mathtools-overbracket},mathrm=sym,mathbf=sym]{unicode-math}
 
 \newfontfamily{\SlidemintTitleFontFamily}[
     Scale=MatchUppercase,
@@ -58,11 +65,7 @@
     BoldItalicFeatures={Weight=700},
 ]{Plus Jakarta Sans}
 
-\setmathfont{Latin Modern Math}[BoldFont={Latin Modern Math}]
-\setmathfont[
-    BoldFont={Roboto Condensed},
-    range=up/{num},
-]{Roboto Condensed Light}
+\setmathfont{Noto Sans Math}
 
 \newcommand*{\SlidemintCodeFont}{\SlidemintCodeFontFamily\fontsize{9.75pt}{15pt}\selectfont}
 

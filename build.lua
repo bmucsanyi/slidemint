@@ -10,6 +10,7 @@ checkengines = { "luatex" }
 local tests = {
   "basic-deck",
   "features-deck",
+  "macromint-before-theme-deck",
   "citations-deck",
   "palette-frappe",
   "palette-macchiato",
@@ -28,6 +29,12 @@ local log_needles = {
   "Underfull \\hbox",
   "Underfull \\vbox",
   "Could not resolve font",
+}
+
+-- Noto Sans Math stores bold math alphabets in the regular OTF. fontspec still
+-- probes a separate NFSS bold face name while building math families.
+local log_allowed = {
+  "Could not resolve font \"Noto Sans Math/B\"",
 }
 
 local function quote(value)
@@ -54,6 +61,13 @@ local function file_contains(path, needle)
 end
 
 local function line_has_log_problem(line)
+  for _, allowed in ipairs(log_allowed) do
+    if string.match(line, "^%(fontspec%)%s+")
+        and string.find(line, allowed, 1, true) then
+      return false
+    end
+  end
+
   if string.sub(line, 1, 1) == "!" then
     return true
   end
@@ -125,6 +139,26 @@ local function slidemint_check()
   end
   if not file_contains("build/features-deck.log", "SLIDEMINT_FIGMINT_THEME theme=mocha") then
     print("build/features-deck.log: missing figmint theme check")
+    return 1
+  end
+  if not file_contains("build/features-deck.log", "SLIDEMINT_ASPECT_RATIO width=455.24408pt;height=256.0748pt") then
+    print("build/features-deck.log: missing widescreen aspect ratio check")
+    return 1
+  end
+  if not file_contains("build/features-deck.log", "SLIDEMINT_FIGMINT_RATIO value=0.5625") then
+    print("build/features-deck.log: missing figmint slide ratio check")
+    return 1
+  end
+  if not file_contains("build/features-deck.log", "SLIDEMINT_FIGMINT_FONT name=caption;size=10") then
+    print("build/features-deck.log: missing figmint caption font check")
+    return 1
+  end
+  if not file_contains("build/features-deck.log", "SLIDEMINT_FIGMINT_FONT name=primary;size=10") then
+    print("build/features-deck.log: missing figmint primary font check")
+    return 1
+  end
+  if not file_contains("build/features-deck.log", "SLIDEMINT_FIGMINT_FONT name=secondary;size=10") then
+    print("build/features-deck.log: missing figmint secondary font check")
     return 1
   end
   for _, name in ipairs(tests) do
