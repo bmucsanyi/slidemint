@@ -12,6 +12,7 @@ local tests = {
   "features-deck",
   "macromint-before-theme-deck",
   "citations-deck",
+  "citef-deck",
   "palette-frappe",
   "palette-macchiato",
 }
@@ -31,10 +32,10 @@ local log_needles = {
   "Could not resolve font",
 }
 
--- Noto Sans Math stores bold math alphabets in the regular OTF. fontspec still
--- probes a separate NFSS bold face name while building math families.
+-- Latin Modern Math stores bold math alphabets in the regular OTF. fontspec
+-- still probes a separate NFSS bold face name while building math families.
 local log_allowed = {
-  "Could not resolve font \"Noto Sans Math/B\"",
+  "Could not resolve font \"Latin Modern Math/B\"",
 }
 
 local function quote(value)
@@ -106,10 +107,13 @@ local function compile_test(name)
     "./tex/latex/slidemint",
     "../macromint/tex/latex/macromint",
     "../figmint/tex/latex/figmint",
+    "./testfiles",
     "",
   }, ":")
+  local bibinputs = "./testfiles:"
   local path = "./.venv/bin:" .. os.getenv("PATH")
   local environment = "env TEXINPUTS=" .. quote(texinputs)
+    .. " BIBINPUTS=" .. quote(bibinputs)
     .. " TEXMFVAR=" .. quote("build/texmf-var")
     .. " TEXMFCACHE=" .. quote("build/texmf-var")
     .. " PATH=" .. quote(path)
@@ -122,6 +126,15 @@ local function compile_test(name)
   end
   if file_contains("build/" .. name .. ".aux", "\\bibdata{") then
     if run("bibtex " .. name, "bibtex " .. quote("build/" .. name)) ~= 0 then
+      return 1
+    end
+  end
+  local bcf = io.open("build/" .. name .. ".bcf", "r")
+  if bcf then
+    bcf:close()
+    if run("biber " .. name,
+        environment .. " biber --input-directory build --output-directory build "
+        .. quote(name)) ~= 0 then
       return 1
     end
   end

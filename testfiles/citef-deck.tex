@@ -1,0 +1,61 @@
+\documentclass[notheorems,aspectratio=169]{beamer}
+\usetheme[latte]{slidemint}
+
+\addbibresource{references.bib}
+
+\slidemintsetup{
+  footer-left = {\textcopyright~Author, 2026}
+}
+
+\title{Citef Check}
+\author{Author}
+\date{2026}
+
+\begin{document}
+
+\maketitle
+
+\begin{frame}
+  \frametitle{Single Footer Citation}
+  \framesubtitle{The footer-left text is replaced}
+  A single citation command takes a bib key, like a citep, but renders the entry in the
+  footer instead of inline. The slide number is still shown at the right.
+  \begin{itemize}
+    \item Title, authors, venue, and year come from the bib entry.
+    \item Body content is unaffected.
+  \end{itemize}
+  \citef{examplepaperA}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Stacked Footer Citations}
+  Two keys, whether passed together or through two calls, stack as two footer lines, still
+  with the slide number shown.
+  \begin{itemize}
+    \item Each key adds one line.
+    \item The lines share the footer color and font.
+  \end{itemize}
+  \citef{examplepaperA,examplepaperB}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Default Footer Returns}
+  A frame with no citation shows the configured footer-left text again, confirming that the
+  citation footer is reset per frame.
+  \begin{itemize}
+    \item The collection is cleared after each slide is shipped out.
+    \item Decks that never call the citation command are unaffected.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Overlay Citation}
+  \only<1>{First overlay of the frame.}\only<2>{Second overlay of the frame.}
+  \begin{itemize}
+    \item The citation appears once per overlay, not duplicated.
+    \item Reset-after-render keeps overlays correct.
+  \end{itemize}
+  \citef{examplepaperA}
+\end{frame}
+
+\end{document}

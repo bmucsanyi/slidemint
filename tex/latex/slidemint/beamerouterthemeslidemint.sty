@@ -44,13 +44,28 @@
 
 \defbeamertemplate*{footline}{slidemint}
 {%
-    \ifbeamer@plainframe\else
-        \begin{beamercolorbox}[wd=\paperwidth,ht=3ex,dp=1.5ex,leftskip=.3cm,rightskip=.3cm,sep=0pt]{footline}
-            \usebeamercolor[fg]{footline}%
-            \slidemintfooterleft%
-            \hfill%
-            \insertframenumber/\inserttotalframenumber%
-        \end{beamercolorbox}
+    \ifbeamer@plainframe
+        \global\let\slidemint@citekeys\@empty%
+    \else
+        \ifx\slidemint@citekeys\@empty%
+            \begin{beamercolorbox}[wd=\paperwidth,ht=3ex,dp=1.5ex,leftskip=.3cm,rightskip=.3cm,sep=0pt]{footline}
+                \usebeamercolor[fg]{footline}%
+                \slidemintfooterleft%
+                \hfill%
+                \insertframenumber/\inserttotalframenumber%
+            \end{beamercolorbox}%
+        \else
+            \begin{beamercolorbox}[wd=\paperwidth,dp=1.5ex,leftskip=.3cm,rightskip=.3cm,sep=0pt]{footline}
+                \usebeamercolor[fg]{footline}%
+                \parbox[b]{\dimexpr\paperwidth-2.2cm\relax}{%
+                    \usebeamerfont{footline}%
+                    \raggedright\setlength{\parskip}{0pt}%
+                    \expandafter\slidemintfootcite\expandafter{\slidemint@citekeys}\par}%
+                \hfill%
+                \insertframenumber/\inserttotalframenumber%
+            \end{beamercolorbox}%
+        \fi
+        \global\let\slidemint@citekeys\@empty%
     \fi
 }
 

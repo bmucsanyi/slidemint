@@ -5,11 +5,10 @@
 ## Requirements
 
 Compile decks with LuaLaTeX. Install the Plus Jakarta Sans, Roboto Condensed,
-MesloLGS NF, and Noto Sans Math font families.
+and MesloLGS NF font families.
 
-Noto Sans Math ships bold math alphabets inside `NotoSansMath-Regular.otf`.
-Slidemint therefore sets `\setmathfont{Noto Sans Math}` without a separate
-`BoldFont` option.
+Slidemint sets `\setmathfont{Latin Modern Math}`, the unicode-math default,
+which ships with TeX Live and needs no separate installation.
 
 Slidemint owns slide math fonts. Use `macromint` for slide notation macros; use
 `papermint` only in papers.
@@ -84,9 +83,12 @@ def loss(theta):
 \end{document}
 ```
 
-Available palette values are `latte`, `frappe`, `macchiato`, and `mocha`.
-These select the matching minted style names: `catppuccin-latte`,
+Available palette values are `latte`, `frappe`, `macchiato`, `mocha`, and
+`minimalist`. These select the matching minted style names: `catppuccin-latte`,
 `catppuccin-frappe`, `catppuccin-macchiato`, and `catppuccin-mocha`.
+`minimalist` is the Catppuccin Latte palette on a pure white background with
+black slide, deck, and block titles; it shares Latte's `catppuccin-latte`
+minted style and `latte` figure style.
 When `figmint` is loaded, slidemint applies the same palette to figure styles.
 
 Use `\SlidemintTextbf`, `\SlidemintTextit`, and `\SlidemintEmph` for colored

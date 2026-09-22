@@ -5,3 +5,5 @@ _minted*/
 venv/
 __pycache__/
 *.py[cod]
+
+sandbox

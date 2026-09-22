@@ -17,6 +17,21 @@
 \newcommand*{\slidemintfigminttheme}{latte}
 \newcommand*{\slidemintfooterleft}{}
 
+% Footer citations. \citef{key,...} works like \citep but renders the cited
+% bib entries in the footer instead of inline: one biblatex-formatted line per
+% key. Multiple keys or multiple \citef on a frame stack as separate footer
+% lines and replace the footer-left text; the slide number is still shown. The
+% footline template renders the collected keys through \slidemintfootcite and
+% clears them after each slide, which keeps the behaviour correct across
+% overlays and leaves decks that never call \citef unaffected.
+\newcommand*{\slidemint@citekeys}{}
+\newcommand{\citef}[1]{%
+    \ifx\slidemint@citekeys\@empty\else
+        \g@addto@macro\slidemint@citekeys{,}%
+    \fi
+    \g@addto@macro\slidemint@citekeys{#1}%
+}
+
 \ExplSyntaxOn
 \tl_new:N \l_slidemint_theme_palette_tl
 \cs_new_protected:Npn \slidemint_theme_select_palette:n #1
@@ -29,6 +44,13 @@
           {
             \cs_gset:Npn \slidemintfigminttheme { latte }
             \cs_gset_protected:Npn \SlidemintApplyPalette { \SlidemintLatteColors }
+            \cs_gset_eq:NN \SlidemintApplyMintedStyle \SlidemintUseLatteMintedStyle
+            \SlidemintDarkModefalse
+          }
+        { minimalist }
+          {
+            \cs_gset:Npn \slidemintfigminttheme { latte }
+            \cs_gset_protected:Npn \SlidemintApplyPalette { \SlidemintMinimalistColors }
             \cs_gset_eq:NN \SlidemintApplyMintedStyle \SlidemintUseLatteMintedStyle
             \SlidemintDarkModefalse
           }
@@ -55,7 +77,7 @@
           }
       }
       {
-        \PackageError { slidemint } { Unknown~palette~'#1' } { Use~latte,~frappe,~macchiato,~or~mocha. }
+        \PackageError { slidemint } { Unknown~palette~'#1' } { Use~latte,~frappe,~macchiato,~mocha,~or~minimalist. }
       }
   }
 \NewDocumentCommand \SlidemintSelectPalette { m }
@@ -64,15 +86,74 @@
 
 \DeclareOptionBeamer{palette}{\SlidemintSelectPalette{#1}}
 \DeclareOptionBeamer{latte}{\SlidemintSelectPalette{latte}}
+\DeclareOptionBeamer{minimalist}{\SlidemintSelectPalette{minimalist}}
 \DeclareOptionBeamer{frappe}{\SlidemintSelectPalette{frappe}}
 \DeclareOptionBeamer{macchiato}{\SlidemintSelectPalette{macchiato}}
 \DeclareOptionBeamer{mocha}{\SlidemintSelectPalette{mocha}}
 \ProcessOptionsBeamer%
 
-\RequirePackage[authoryear,round]{natbib}
-\setcitestyle{authoryear,round,aysep={,},yysep={;},notesep={, }}
-\setlength{\bibsep}{0.45\baselineskip}
-\renewcommand*{\bibfont}{\footnotesize}
+\RequirePackage[backend=biber,style=authoryear,natbib=true,sorting=none,maxcitenames=99]{biblatex}
+
+% Footer citation format: "Title. Authors. Venue, Year." pulled from the cited
+% bib entry. \slidemintfootcite loops over keys and puts each on its own line;
+% the footline template calls it with the keys collected by \citef. The venue
+% falls back across the common entry-type fields.
+% Uniform venue: plain text for every entry type (booktitle/journaltitle are
+% italic by default, note/publisher are not; this removes that inconsistency).
+\DeclareFieldFormat{slidemint:venuefield}{#1}
+\newbibmacro*{slidemint:venue}{%
+    \iffieldundef{journaltitle}
+        {\iffieldundef{booktitle}
+            {\iffieldundef{eventtitle}
+                {\iflistundef{publisher}
+                    {\printfield{note}}
+                    {\printlist{publisher}}}
+                {\printfield{eventtitle}}}
+            {\printfield[slidemint:venuefield]{booktitle}}}
+        {\printfield[slidemint:venuefield]{journaltitle}}%
+}
+% Family name to boldface in footer citations (e.g. the presenter's own name),
+% set via \slidemintsetup{cite-highlight = {...}}; empty means no highlighting.
+\newcommand*{\slidemint@boldfamily}{}
+% Joint-first authors carry a star in the footer name list, marked in the bib
+% with author+an = {1=equal;2=equal}. Inert for entries without the annotation.
+% The asterisk glyph already sits high, so it takes a gentle raise, not a full
+% \textsuperscript.
+\newcommand*{\slidemint@equalmark}{$^*$}
+% Uniform title: italic for every entry type, never quoted.
+\DeclareFieldFormat{slidemint:title}{\textit{#1}}
+% Boldface the highlighted family name through the complete-name hook. It fires
+% inside name:family but after the inter-name delimiter is printed, so the comma
+% before the name stays upright; wrapping name:family directly would bold that
+% leading comma. The hook is used only by the family-only name:family macro.
+\renewcommand*{\mkbibcompletenamefamily}[1]{%
+    \ifboolexpr{ not test {\ifdefempty{\slidemint@boldfamily}}
+                 and test {\ifdefstrequal{\namepartfamily}{\slidemint@boldfamily}} }
+        {\mkbibbold{#1}}
+        {#1}%
+}
+\DeclareNameFormat{slidemint:family}{%
+    \usebibmacro{name:family}
+        {\namepartfamily}{\namepartgiven}{\namepartprefix}{\namepartsuffix}%
+    \ifitemannotation{equal}{\slidemint@equalmark}{}%
+    \usebibmacro{name:andothers}%
+}
+% Punctuation-aware units so a trailing "et al." does not double the period.
+\newbibmacro*{slidemint:footcite}{%
+    \printfield[slidemint:title]{title}%
+    \setunit*{\addperiod\space}%
+    \printnames[slidemint:family]{author}%
+    \setunit*{\addperiod\space}%
+    \usebibmacro{slidemint:venue}%
+    \setunit*{\addcomma\space}%
+    \printfield{year}%
+    \adddot%
+}
+\DeclareCiteCommand{\slidemintfootcite}
+    {}
+    {\usebibmacro{slidemint:footcite}}
+    {\newline}
+    {}
 
 \usefonttheme{slidemint}
 \usecolortheme{slidemint}
@@ -84,6 +165,7 @@
     /slidemint/.is family,
     /slidemint,
     footer-left/.store in=\slidemintfooterleft,
+    cite-highlight/.store in=\slidemint@boldfamily,
 }
 \newcommand*{\slidemintsetup}[1]{\pgfkeys{/slidemint/.cd,#1}}
 

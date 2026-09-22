@@ -236,4 +236,23 @@
     \SlidemintApplyBeamerColors%
 }
 
+\newcommand*{\SlidemintMinimalistColors}{%
+    \SlidemintDarkModefalse%
+    \SlidemintUsePalette{Latte}%
+    \colorlet{SlidemintBase}{white}%
+    \colorlet{SlidemintBlockBody}{CatLatteBlue!10!white}%
+    \colorlet{SlidemintAlertBody}{CatLatteRed!10!white}%
+    \colorlet{SlidemintExampleBody}{CatLatteMauve!10!white}%
+    \colorlet{SlidemintCodeBody}{white}%
+    \colorlet{SlidemintHeading}{SlidemintText!70!black}%
+    % Minimalist deck: emphasis shares the strong (bold) color.
+    \colorlet{SlidemintEmphasis}{SlidemintStrong}%
+    \SlidemintApplyBeamerColors%
+    % Minimalist deck: table rules share the strong (bold) color.
+    \arrayrulecolor{SlidemintStrong}%
+    \setbeamercolor{block title}{fg=SlidemintHeading,bg=SlidemintBlockBody}%
+    \setbeamercolor{block title alerted}{fg=SlidemintHeading,bg=SlidemintAlertBody}%
+    \setbeamercolor{block title example}{fg=SlidemintHeading,bg=SlidemintExampleBody}%
+}
+
 \SlidemintLatteColors%
