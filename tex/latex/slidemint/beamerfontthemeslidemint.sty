@@ -68,7 +68,9 @@
     BoldItalicFeatures={Weight=700},
 ]{Plus Jakarta Sans}
 
-\setmathfont{Latin Modern Math}
+% By file name: given the family name, fontspec looks for a bold face and logs
+% that it cannot resolve it.
+\setmathfont{latinmodern-math.otf}
 
 \newcommand*{\SlidemintCodeFont}{\SlidemintCodeFontFamily\fontsize{9.75pt}{15pt}\selectfont}
 
