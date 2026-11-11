@@ -1,21 +1,13 @@
 # slidemint
 
-`slidemint` is a LuaLaTeX-only `beamer` theme for visual slide decks.
+`slidemint` is my Beamer theme for slide decks.
 
 ## Requirements
 
-Compile decks with LuaLaTeX. Install the Plus Jakarta Sans, Roboto Condensed,
-and MesloLGS NF font families.
-
-Slidemint sets `\setmathfont{Latin Modern Math}`, the unicode-math default,
-which ships with TeX Live and needs no separate installation.
-
-Slidemint owns slide math fonts. Use `macromint` for slide notation macros; use
-`papermint` only in papers.
-
-The theme uses `fontspec`, `unicode-math`, and `minted` v3. Code highlighting
-uses the Catppuccin Pygments styles. Put a Python environment containing
-`latexminted` and `catppuccin[pygments]` first on `PATH` before compiling:
+LuaLaTeX, `fontspec`, `unicode-math`, `biblatex` with `biber`, `minted` v3 with
+the Catppuccin Pygments styles, `tikz`, and the font families Plus Jakarta Sans,
+Roboto Condensed, and MesloLGS NF. minted runs `latexminted` from a Python
+environment that is first on `PATH`:
 
 ```sh
 uv venv
@@ -25,30 +17,26 @@ export PATH="$PWD/.venv/bin:$PATH"
 
 ## Installation
 
-Install the theme files into your user TeX tree from the repository root:
+From the repository root:
 
 ```sh
 l3build install
 ```
 
-Check that TeX can find the installed theme:
-
-```sh
-kpsewhich beamerthemeslidemint.sty
-```
-
-`slidemint` installs only the slide theme. Install `macromint` and `figmint`
-from their own repositories if your deck loads them.
+This installs the theme and `slidemintfonts.sty` into the user TeX tree, where
+`kpsewhich beamerthemeslidemint.sty` finds them. For a deck that travels, vendor
+the six files into its source.
 
 ## Usage
 
 ```tex
-\documentclass[notheorems,aspectratio=169]{beamer}
+\documentclass[10pt,aspectratio=169,notheorems]{beamer}
 \usetheme[palette = latte]{slidemint}
 \usepackage{macromint}
 \usepackage{figmint}
+\addbibresource{references.bib}
 \slidemintsetup{
-  footer-left = {\textcopyright~Author, 2026. Site: example.org}
+  footer-left = {\textcopyright~Author, 2026},
 }
 
 \title{Talk title}
@@ -59,7 +47,7 @@ from their own repositories if your deck loads them.
 
 \begin{frame}
   \frametitle{Frame title}
-  Content
+  Content with a citation \citep{key}, and one in the footer.\citef{key}
 \end{frame}
 
 \begin{frame}[fragile]
@@ -70,46 +58,64 @@ def loss(theta):
   \end{minted}
 \end{frame}
 
-\begin{frame}
-  \frametitle{Citations}
-  In-text citations use natbib: \citep{mucsanyi2026slidemint}.
-\end{frame}
-
 \begin{frame}[allowframebreaks]
   \frametitle{References}
-  \bibliographystyle{plainnat}
-  \bibliography{references}
+  \printbibliography[heading=none]
 \end{frame}
 \end{document}
 ```
 
-Available palette values are `latte`, `frappe`, `macchiato`, `mocha`, and
-`minimalist`. These select the matching minted style names: `catppuccin-latte`,
-`catppuccin-frappe`, `catppuccin-macchiato`, and `catppuccin-mocha`.
-`minimalist` is the Catppuccin Latte palette on a pure white background with
-black slide, deck, and block titles; it shares Latte's `catppuccin-latte`
-minted style and `latte` figure style.
-When `figmint` is loaded, slidemint applies the same palette to figure styles.
+The palettes are `latte`, `frappe`, `macchiato`, `mocha`, and `minimalist`,
+which is Latte on white with dark titles. The palette selects the Catppuccin
+Pygments style of the code and the figmint theme of the figures, and figmint
+draws the figures of a deck at a height to width ratio of 0.48.
 
-Use `\SlidemintTextbf`, `\SlidemintTextit`, and `\SlidemintEmph` for colored
-slide emphasis. Core LaTeX `\textbf`, `\textit`, and `\emph` keep their normal
-meaning.
+Citations go through biblatex with biber, in author-year style with the natbib
+commands `\citep` and `\citet`, and `\printbibliography` on a reference frame.
+`\citef{key}` sets the cited entries in the footer of the frame instead, one
+line each, in place of the footer text. `cite-highlight` names a family name to
+set in bold there.
 
-Slidemint loads `natbib` in author-year round mode. Use `\citep` for
-parenthetical citations, `\citet` for textual citations, and native BibTeX
-commands on a final reference frame.
+The fonts of a deck are in `slidemintfonts.sty`, which the theme loads and
+which figmint loads to draw the figures in the deck's fonts. An article can load
+it on its own.
 
-Slidemint owns slide appearance only. Math notation belongs to the standalone
-`macromint` package, and figure styles belong to the standalone `figmint`
-package.
+## Public interface
+
+- The option `palette`.
+- `\slidemintsetup` with the keys `footer-left` and `cite-highlight`.
+- `\citef{keys}`.
+- `ribbon`, and `alignedblock`, `alignedalertblock`, and `alignedexampleblock`,
+  which take the height of the body and the title:
+  `\begin{alignedblock}{3cm}{Title}`.
+- `\SlidemintTextbf`, `\SlidemintTextit`, and `\SlidemintEmph`, colored
+  emphasis. `\textbf`, `\textit`, and `\emph` keep their meaning.
+- `\SlidemintCodeFont`.
+- `\ifSlidemintDarkMode`, true under `frappe`, `macchiato`, and `mocha`.
+- The semantic colors: `SlidemintText`, `SlidemintSubtext`, `SlidemintMuted`,
+  `SlidemintBase`, `SlidemintSurface`, `SlidemintPanel`, `SlidemintCrust`,
+  `SlidemintSurfaceZero` to `SlidemintSurfaceTwo`, `SlidemintOverlayZero` to
+  `SlidemintOverlayTwo`, `SlidemintAccent`, `SlidemintHeading`,
+  `SlidemintListMarker`, `SlidemintStrong`, `SlidemintEmphasis`,
+  `SlidemintStrongEmphasis`, `SlidemintLink`, `SlidemintExternalLink`,
+  `SlidemintOnAccent`, `SlidemintAlert`, `SlidemintRule`,
+  `SlidemintBlockTitle`, `SlidemintBlockBody`, `SlidemintAlertTitle`,
+  `SlidemintAlertBody`, `SlidemintExampleTitle`, `SlidemintExampleBody`,
+  `SlidemintCodeBody`, `SlidemintRibbonBody`, and the fourteen Catppuccin hues
+  of the palette, `SlidemintRosewater` to `SlidemintLavender`.
+- `slidemintfonts.sty`.
 
 ## Tests
 
-Run:
+From the repository root:
 
 ```sh
 l3build check
 ```
+
+The tests need checkouts of `figmint`, which provides the shared test harness,
+and `macromint` next to this repository, the `.venv` above, the three font
+families, `biber`, `pdftoppm`, and `pdftotext`.
 
 ## License
 

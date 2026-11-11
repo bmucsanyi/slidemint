@@ -2,6 +2,11 @@
 \ProvidesPackage{beamercolorthemeslidemint}[2026-05-25 v0.1.0 Slidemint color theme]
 
 \RequirePackage{colortbl}
+\RequirePackage{etoolbox}
+
+% Whether the palette is dark. The theme never reads it; a deck can choose
+% content by it.
+\newif\ifSlidemintDarkMode
 
 % Catppuccin Latte
 \definecolor{CatLatteRosewater}{RGB}{220,138,120}
@@ -115,7 +120,8 @@
 \definecolor{CatMochaMantle}{RGB}{24,24,37}
 \definecolor{CatMochaCrust}{RGB}{17,17,27}
 
-\newcommand*{\SlidemintUsePalette}[1]{%
+% The semantic colors, from a Catppuccin flavor.
+\newcommand*{\slidemint@usepalette}[1]{%
     \colorlet{SlidemintRosewater}{Cat#1Rosewater}%
     \colorlet{SlidemintFlamingo}{Cat#1Flamingo}%
     \colorlet{SlidemintPink}{Cat#1Pink}%
@@ -152,6 +158,8 @@
     \colorlet{SlidemintLink}{Cat#1Blue}%
     \colorlet{SlidemintExternalLink}{Cat#1Teal}%
     \colorlet{SlidemintOnAccent}{Cat#1Mantle}%
+    \colorlet{SlidemintAlert}{Cat#1Red}%
+    \colorlet{SlidemintRule}{Cat#1Lavender}%
     \colorlet{SlidemintBlockTitle}{Cat#1Blue}%
     \colorlet{SlidemintBlockBody}{Cat#1Blue!10!Cat#1Base}%
     \colorlet{SlidemintAlertTitle}{Cat#1Red}%
@@ -162,16 +170,12 @@
     \colorlet{SlidemintRibbonBody}{Cat#1Mantle}%
 }
 
-\newcommand*{\SlidemintApplyBeamerColors}{%
-    \mode<presentation>%
+% The Beamer colors, from the semantic colors.
+\newcommand*{\slidemint@applybeamercolors}{%
     \setbeamercolor{frametitle}{bg=SlidemintBase,fg=SlidemintHeading}%
     \setbeamercolor{frametitle right}{bg=SlidemintBase}%
     \setbeamercolor{framesubtitle}{bg=SlidemintBase,fg=SlidemintSubtext}%
     \setbeamercolor{footline}{fg=SlidemintText,bg=SlidemintBase}%
-    \setbeamercolor{title in head/foot}{parent=footline}%
-    \setbeamercolor{author in head/foot}{parent=footline}%
-    \setbeamercolor{date in head/foot}{parent=footline}%
-    \setbeamercolor{page number in head/foot}{fg=SlidemintText,bg=SlidemintSurfaceZero}%
     \setbeamercolor{normal text}{fg=SlidemintText,bg=SlidemintBase}%
     \setbeamercolor{titlelike}{parent=structure}%
     \setbeamercolor{item}{fg=SlidemintAccent}%
@@ -184,7 +188,7 @@
     \setbeamercolor{item projected}{fg=SlidemintOnAccent,bg=SlidemintAccent}%
     \setbeamercolor{description item}{fg=SlidemintListMarker,bg=}%
     \setbeamercolor{structure}{fg=SlidemintAccent,bg=}%
-    \setbeamercolor{alerted text}{fg=SlidemintAlertTitle}%
+    \setbeamercolor{alerted text}{fg=SlidemintAlert}%
     \setbeamercolor{block title}{fg=SlidemintBlockTitle,bg=SlidemintBlockBody}%
     \setbeamercolor{block body}{fg=SlidemintText,bg=SlidemintBlockBody}%
     \setbeamercolor{block title alerted}{fg=SlidemintAlertTitle,bg=SlidemintAlertBody}%
@@ -195,7 +199,7 @@
     \setbeamercolor{ribbon structure}{fg=SlidemintAccent}%
     \setbeamercolor{ribbon item}{fg=SlidemintAccent}%
     \setbeamercolor{ribbon item projected}{fg=SlidemintOnAccent,bg=SlidemintAccent}%
-    \setbeamercolor{ribbon alerted text}{fg=SlidemintAlertTitle}%
+    \setbeamercolor{ribbon alerted text}{fg=SlidemintAlert}%
     \setbeamercolor{code block}{fg=SlidemintText,bg=SlidemintCodeBody}%
     \setbeamercolor{bibliography item}{fg=SlidemintMuted,bg=}%
     \setbeamercolor{bibliography entry author}{fg=SlidemintText,bg=}%
@@ -208,51 +212,53 @@
     \setbeamercolor{date}{fg=SlidemintSubtext,bg=}%
     \setbeamercolor{institute}{fg=SlidemintSubtext,bg=}%
     \setbeamercolor{titlegraphic}{fg=SlidemintSubtext,bg=}%
-    \arrayrulecolor{SlidemintAccent}%
-    \mode<all>%
+    \arrayrulecolor{SlidemintRule}%
 }
 
-\newcommand*{\SlidemintLatteColors}{%
-    \SlidemintDarkModefalse%
-    \SlidemintUsePalette{Latte}%
-    \SlidemintApplyBeamerColors%
+% A palette is one declaration: its name, its Catppuccin flavor, light or
+% dark, and the semantic colors it overrides. The Beamer colors, the minted
+% style, the figmint theme, and \ifSlidemintDarkMode follow from it.
+\newcommand*{\slidemint@declarepalette}[4]{%
+    \csdef{slidemint@palette@#1}{\slidemint@applypalette{#2}{#3}{#4}}%
 }
-
-\newcommand*{\SlidemintFrappeColors}{%
-    \SlidemintDarkModetrue%
-    \SlidemintUsePalette{Frappe}%
-    \SlidemintApplyBeamerColors%
+\newcommand*{\slidemint@applypalette}[3]{%
+    \lowercase{\def\slidemint@flavor{#1}}%
+    \ifstrequal{#2}{dark}{\SlidemintDarkModetrue}{%
+        \ifstrequal{#2}{light}{\SlidemintDarkModefalse}{%
+            \PackageError{slidemint}{A palette is light or dark, not '#2'}{Declare the palette as light or dark.}%
+        }%
+    }%
+    \slidemint@usepalette{#1}%
+    #3%
+    \slidemint@applybeamercolors
 }
+\newcommand*{\slidemint@mintedstyle}{catppuccin-\slidemint@flavor}
 
-\newcommand*{\SlidemintMacchiatoColors}{%
-    \SlidemintDarkModetrue%
-    \SlidemintUsePalette{Macchiato}%
-    \SlidemintApplyBeamerColors%
-}
-
-\newcommand*{\SlidemintMochaColors}{%
-    \SlidemintDarkModetrue%
-    \SlidemintUsePalette{Mocha}%
-    \SlidemintApplyBeamerColors%
-}
-
-\newcommand*{\SlidemintMinimalistColors}{%
-    \SlidemintDarkModefalse%
-    \SlidemintUsePalette{Latte}%
+\slidemint@declarepalette{latte}{Latte}{light}{}
+\slidemint@declarepalette{frappe}{Frappe}{dark}{}
+\slidemint@declarepalette{macchiato}{Macchiato}{dark}{}
+\slidemint@declarepalette{mocha}{Mocha}{dark}{}
+% Latte on white, with dark titles, and emphasis and rules in the strong color.
+\slidemint@declarepalette{minimalist}{Latte}{light}{%
     \colorlet{SlidemintBase}{white}%
     \colorlet{SlidemintBlockBody}{CatLatteBlue!10!white}%
     \colorlet{SlidemintAlertBody}{CatLatteRed!10!white}%
     \colorlet{SlidemintExampleBody}{CatLatteMauve!10!white}%
     \colorlet{SlidemintCodeBody}{white}%
     \colorlet{SlidemintHeading}{SlidemintText!70!black}%
-    % Minimalist deck: emphasis shares the strong (bold) color.
+    \colorlet{SlidemintBlockTitle}{SlidemintHeading}%
+    \colorlet{SlidemintAlertTitle}{SlidemintHeading}%
+    \colorlet{SlidemintExampleTitle}{SlidemintHeading}%
     \colorlet{SlidemintEmphasis}{SlidemintStrong}%
-    \SlidemintApplyBeamerColors%
-    % Minimalist deck: table rules share the strong (bold) color.
-    \arrayrulecolor{SlidemintStrong}%
-    \setbeamercolor{block title}{fg=SlidemintHeading,bg=SlidemintBlockBody}%
-    \setbeamercolor{block title alerted}{fg=SlidemintHeading,bg=SlidemintAlertBody}%
-    \setbeamercolor{block title example}{fg=SlidemintHeading,bg=SlidemintExampleBody}%
+    \colorlet{SlidemintRule}{SlidemintStrong}%
 }
 
-\SlidemintLatteColors%
+\newcommand*{\slidemint@selectpalette}[1]{%
+    \ifcsdef{slidemint@palette@#1}
+        {\csuse{slidemint@palette@#1}}
+        {\PackageError{slidemint}{Unknown palette '#1'}{Use latte, frappe, macchiato, mocha, or minimalist.}}%
+}
+
+% The palette the theme was loaded with, applied once; latte on its own.
+\providecommand*{\slidemint@palette}{latte}
+\expandafter\slidemint@selectpalette\expandafter{\slidemint@palette}

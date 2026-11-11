@@ -1,5 +1,5 @@
 \documentclass[notheorems,aspectratio=169]{beamer}
-\usetheme[mocha]{slidemint}
+\usetheme[palette = mocha]{slidemint}
 \usepackage{macromint}
 \usepackage{figmint}
 
@@ -13,23 +13,14 @@
 \institute{Institute}
 \date{2026}
 
-\makeatletter
-\newcommand*{\SlidemintPrintFontSize}[2]{%
-  \begingroup
-    #2%
-    \typeout{SLIDEMINT_FIGMINT_FONT name=#1;size=\f@size}%
-  \endgroup
-}
-\makeatother
-
 \begin{document}
 
 \typeout{SLIDEMINT_FIGMINT_THEME theme=\figminttheme}
 \typeout{SLIDEMINT_ASPECT_RATIO width=\the\paperwidth;height=\the\paperheight}
 \typeout{SLIDEMINT_FIGMINT_RATIO value=\figmintheighttowidthratio}
-\SlidemintPrintFontSize{caption}{\usebeamerfont{caption}}
-\SlidemintPrintFontSize{primary}{\figmintprimaryfont}
-\SlidemintPrintFontSize{secondary}{\figmintsecondaryfont}
+\makeatletter
+\begingroup\usebeamerfont{caption}\typeout{SLIDEMINT_CAPTION_FONT size=\f@size}\endgroup
+\makeatother
 
 \maketitle
 
@@ -99,22 +90,6 @@ plain text code
   \end{minted}
 
   Inline code uses \mintinline{bash}|rsync| inside text.
-\end{frame}
-
-\begin{frame}
-  \frametitle{Figures}
-  \framesubtitle{Figmint follows the slide palette}
-
-  \begin{figmintfigure}
-    \begin{axis}[
-      xmin=-0.5, xmax=2.5,
-      ymin=0, ymax=1,
-      xtick={0,1,2},
-      nodes near coords,
-    ]
-      \addplot+[figmint bar] coordinates {(0,0.35) (1,0.65) (2,0.50)};
-    \end{axis}
-  \end{figmintfigure}
 \end{frame}
 
 \end{document}

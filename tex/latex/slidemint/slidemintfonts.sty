@@ -1,0 +1,42 @@
+\NeedsTeXFormat{LaTeX2e}[2020-10-01]
+\ProvidesPackage{slidemintfonts}[2026-05-25 v0.1.0 The fonts of a slidemint deck]
+
+% The text and math fonts of a slidemint deck, as a package of their own: the
+% font theme loads it, a figure drawn for the deck is typeset with it, and an
+% article can load it on its own.
+
+\RequirePackage{fontspec}
+\RequirePackage{mathtools}
+% mathtools is loaded first; unicode-math owns the documented handoff.
+\@ifpackageloaded{unicode-math}
+    {%
+        \PackageError{slidemint}
+            {Slidemint must load unicode-math itself}
+            {Load slidemint before packages that load unicode-math. Use macromint, not papermint, in slide decks.}%
+    }
+    {}
+\RequirePackage[warnings-off={mathtools-colon,mathtools-overbracket},mathrm=sym,mathbf=sym]{unicode-math}
+
+% One text face: the sans family is the main family.
+\setmainfont[
+    ItalicFont={Roboto Condensed Light Italic},
+    BoldFont={Roboto Condensed},
+    BoldItalicFont={Roboto Condensed Italic},
+    Ligatures=TeX,
+]{Roboto Condensed Light}
+\edef\sfdefault{\rmdefault}
+
+\setmonofont[
+    ItalicFont={MesloLGS NF Italic},
+    BoldFont={MesloLGS NF Bold},
+    BoldItalicFont={MesloLGS NF Bold Italic},
+    Ligatures=NoCommon,
+    Scale=MatchLowercase,
+]{MesloLGS NF}
+
+% By file name: given the family name, fontspec looks for a bold face and logs
+% that it cannot resolve it.
+\setmathfont{latinmodern-math.otf}
+
+% A figure drawn by figmint is set in these fonts too.
+\AddToHook{package/figmint/after}{\figmintpreamble{\usepackage{slidemintfonts}}}

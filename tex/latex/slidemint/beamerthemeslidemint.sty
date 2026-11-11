@@ -1,4 +1,4 @@
-\NeedsTeXFormat{LaTeX2e}[2020-10-01]
+\NeedsTeXFormat{LaTeX2e}[2022-06-01]
 \ProvidesPackage{beamerthemeslidemint}[2026-05-25 v0.1.0 Beamer theme for visual slide decks]
 
 \RequirePackage{iftex}
@@ -7,21 +7,19 @@
     \PackageError{slidemint}{Slidemint requires LuaLaTeX}{Compile with lualatex.}%
 \fi
 
-\newif\ifSlidemintDarkMode%
-\newcommand*{\SlidemintApplyPalette}{\SlidemintLatteColors}
-\newcommand*{\SlidemintUseLatteMintedStyle}{\setminted{style=catppuccin-latte}}
-\newcommand*{\SlidemintUseFrappeMintedStyle}{\setminted{style=catppuccin-frappe}}
-\newcommand*{\SlidemintUseMacchiatoMintedStyle}{\setminted{style=catppuccin-macchiato}}
-\newcommand*{\SlidemintUseMochaMintedStyle}{\setminted{style=catppuccin-mocha}}
-\newcommand*{\SlidemintApplyMintedStyle}{\SlidemintUseLatteMintedStyle}
-\newcommand*{\slidemintfigminttheme}{latte}
-\newcommand*{\slidemintfooterleft}{}
+% The one option, the palette, through the kernel's key-value interface, which
+% stops on an option the theme does not declare; Beamer's own would ignore it.
+\newcommand*{\slidemint@palette}{latte}
+\DeclareKeys[slidemint]{palette.store = \slidemint@palette}
+\ProcessKeyOptions[slidemint]
+
+\RequirePackage[backend=biber,style=authoryear,natbib=true,sorting=none,maxcitenames=99]{biblatex}
 
 % Footer citations. \citef{key,...} works like \citep but renders the cited
 % bib entries in the footer instead of inline: one biblatex-formatted line per
 % key. Multiple keys or multiple \citef on a frame stack as separate footer
 % lines and replace the footer-left text; the slide number is still shown. The
-% footline template renders the collected keys through \slidemintfootcite and
+% footline template renders the collected keys through \slidemint@footcite and
 % clears them after each slide, which keeps the behaviour correct across
 % overlays and leaves decks that never call \citef unaffected.
 \newcommand*{\slidemint@citekeys}{}
@@ -32,70 +30,8 @@
     \g@addto@macro\slidemint@citekeys{#1}%
 }
 
-\ExplSyntaxOn
-\tl_new:N \l_slidemint_theme_palette_tl
-\cs_new_protected:Npn \slidemint_theme_select_palette:n #1
-  {
-    \tl_set:Nn \l_slidemint_theme_palette_tl {#1}
-    \tl_remove_all:Nn \l_slidemint_theme_palette_tl { ~ }
-    \str_case:VnF \l_slidemint_theme_palette_tl
-      {
-        { latte }
-          {
-            \cs_gset:Npn \slidemintfigminttheme { latte }
-            \cs_gset_protected:Npn \SlidemintApplyPalette { \SlidemintLatteColors }
-            \cs_gset_eq:NN \SlidemintApplyMintedStyle \SlidemintUseLatteMintedStyle
-            \SlidemintDarkModefalse
-          }
-        { minimalist }
-          {
-            \cs_gset:Npn \slidemintfigminttheme { latte }
-            \cs_gset_protected:Npn \SlidemintApplyPalette { \SlidemintMinimalistColors }
-            \cs_gset_eq:NN \SlidemintApplyMintedStyle \SlidemintUseLatteMintedStyle
-            \SlidemintDarkModefalse
-          }
-        { frappe }
-          {
-            \cs_gset:Npn \slidemintfigminttheme { frappe }
-            \cs_gset_protected:Npn \SlidemintApplyPalette { \SlidemintFrappeColors }
-            \cs_gset_eq:NN \SlidemintApplyMintedStyle \SlidemintUseFrappeMintedStyle
-            \SlidemintDarkModetrue
-          }
-        { macchiato }
-          {
-            \cs_gset:Npn \slidemintfigminttheme { macchiato }
-            \cs_gset_protected:Npn \SlidemintApplyPalette { \SlidemintMacchiatoColors }
-            \cs_gset_eq:NN \SlidemintApplyMintedStyle \SlidemintUseMacchiatoMintedStyle
-            \SlidemintDarkModetrue
-          }
-        { mocha }
-          {
-            \cs_gset:Npn \slidemintfigminttheme { mocha }
-            \cs_gset_protected:Npn \SlidemintApplyPalette { \SlidemintMochaColors }
-            \cs_gset_eq:NN \SlidemintApplyMintedStyle \SlidemintUseMochaMintedStyle
-            \SlidemintDarkModetrue
-          }
-      }
-      {
-        \PackageError { slidemint } { Unknown~palette~'#1' } { Use~latte,~frappe,~macchiato,~mocha,~or~minimalist. }
-      }
-  }
-\NewDocumentCommand \SlidemintSelectPalette { m }
-  { \slidemint_theme_select_palette:n {#1} }
-\ExplSyntaxOff
-
-\DeclareOptionBeamer{palette}{\SlidemintSelectPalette{#1}}
-\DeclareOptionBeamer{latte}{\SlidemintSelectPalette{latte}}
-\DeclareOptionBeamer{minimalist}{\SlidemintSelectPalette{minimalist}}
-\DeclareOptionBeamer{frappe}{\SlidemintSelectPalette{frappe}}
-\DeclareOptionBeamer{macchiato}{\SlidemintSelectPalette{macchiato}}
-\DeclareOptionBeamer{mocha}{\SlidemintSelectPalette{mocha}}
-\ProcessOptionsBeamer%
-
-\RequirePackage[backend=biber,style=authoryear,natbib=true,sorting=none,maxcitenames=99]{biblatex}
-
 % Footer citation format: "Title. Authors. Venue, Year." pulled from the cited
-% bib entry. \slidemintfootcite loops over keys and puts each on its own line;
+% bib entry. \slidemint@footcite loops over keys and puts each on its own line;
 % the footline template calls it with the keys collected by \citef. The venue
 % falls back across the common entry-type fields.
 % Uniform venue: plain text for every entry type (booktitle/journaltitle are
@@ -149,7 +85,7 @@
     \printfield{year}%
     \adddot%
 }
-\DeclareCiteCommand{\slidemintfootcite}
+\DeclareCiteCommand{\slidemint@footcite}
     {}
     {\usebibmacro{slidemint:footcite}}
     {\newline}
@@ -157,29 +93,23 @@
 
 \usefonttheme{slidemint}
 \usecolortheme{slidemint}
-\SlidemintApplyPalette%
-
-\RequirePackage{tikz}
-
-\pgfkeys{
-    /slidemint/.is family,
-    /slidemint,
-    footer-left/.store in=\slidemintfooterleft,
-    cite-highlight/.store in=\slidemint@boldfamily,
-}
-\newcommand*{\slidemintsetup}[1]{\pgfkeys{/slidemint/.cd,#1}}
-
-\newcommand*{\SlidemintApplyFigmintStyle}{%
-    \@ifpackageloaded{figmint}{%
-        \figmintsettheme{\slidemintfigminttheme}%
-        \figmintset{height to width ratio=0.5625}%
-    }{}%
-}
-
 \useinnertheme{slidemint}
 \useoutertheme{slidemint}
-\AddToHook{package/figmint/after}{\SlidemintApplyFigmintStyle}
-\SlidemintApplyFigmintStyle
+
+\newcommand*{\slidemint@footerleft}{}
+\DeclareKeys[slidemint/setup]{
+    footer-left.store = \slidemint@footerleft,
+    cite-highlight.store = \slidemint@boldfamily,
+}
+\newcommand*{\slidemintsetup}[1]{\SetKeys[slidemint/setup]{#1}}
+
+% figmint follows the palette and draws the figures of a deck at this ratio: a
+% figure of full width is then 218bp tall, which a frame with a title has room
+% for. The kernel runs the hook at once when figmint is already loaded.
+\AddToHook{package/figmint/after}{%
+    \expandafter\figmintsettheme\expandafter{\slidemint@flavor}%
+    \figmintset{height to width ratio=0.48}%
+}
 
 \renewcommand{\maketitle}{%
     \ifbeamer@inframe
@@ -199,41 +129,33 @@
     urlcolor=SlidemintExternalLink,
     filecolor=SlidemintExternalLink}
 
-\newif\ifSlidemintInsideStrong%
-\newif\ifSlidemintInsideEmphasis%
+% Colored emphasis. Strong text inside emphasized text, and the reverse, take
+% the strong emphasis color.
+\newif\ifslidemint@insidestrong
+\newif\ifslidemint@insideemphasis
 
 \NewDocumentCommand \SlidemintTextbf { m } {%
     {%
-        \ifSlidemintInsideEmphasis%
+        \ifslidemint@insideemphasis
             \color{SlidemintStrongEmphasis}%
         \else
             \color{SlidemintStrong}%
         \fi
-        \SlidemintInsideStrongtrue%
+        \slidemint@insidestrongtrue
         \textbf{#1}%
     }%
 }
 
-\NewDocumentCommand \SlidemintTextit { m } {%
+\newcommand*{\slidemint@emphasis}[1]{%
     {%
-        \ifSlidemintInsideStrong%
+        \ifslidemint@insidestrong
             \color{SlidemintStrongEmphasis}%
         \else
             \color{SlidemintEmphasis}%
         \fi
-        \SlidemintInsideEmphasistrue%
-        \textit{#1}%
+        \slidemint@insideemphasistrue
+        #1%
     }%
 }
-
-\NewDocumentCommand \SlidemintEmph { m } {%
-    {%
-        \ifSlidemintInsideStrong%
-            \color{SlidemintStrongEmphasis}%
-        \else
-            \color{SlidemintEmphasis}%
-        \fi
-        \SlidemintInsideEmphasistrue%
-        \emph{#1}%
-    }%
-}
+\NewDocumentCommand \SlidemintTextit { m } {\slidemint@emphasis{\textit{#1}}}
+\NewDocumentCommand \SlidemintEmph { m } {\slidemint@emphasis{\emph{#1}}}

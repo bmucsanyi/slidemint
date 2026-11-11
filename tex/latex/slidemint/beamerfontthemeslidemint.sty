@@ -1,26 +1,11 @@
 \NeedsTeXFormat{LaTeX2e}[2020-10-01]
 \ProvidesPackage{beamerfontthemeslidemint}[2026-05-25 v0.1.0 Slidemint font theme]
 
-\RequirePackage{iftex}
+% The text and math fonts, in a package of their own so that figures share them.
+\RequirePackage{slidemintfonts}
 
-\ifLuaTeX
-\else
-    \PackageError{slidemint}{Slidemint requires LuaLaTeX}{Compile with lualatex.}%
-\fi
-
-\RequirePackage{fontspec}
-\RequirePackage{mathtools}
-% Mathtools is loaded first; unicode-math owns the documented handoff.
-\@ifpackageloaded{unicode-math}
-    {%
-        \PackageError{slidemint}
-            {Slidemint must load unicode-math itself}
-            {Load slidemint before packages that load unicode-math. Use macromint, not papermint, in slide decks.}%
-    }
-    {}
-\RequirePackage[warnings-off={mathtools-colon,mathtools-overbracket},mathrm=sym,mathbf=sym]{unicode-math}
-
-\newfontfamily{\SlidemintTitleFontFamily}[
+% The title, code, and quote families belong to the theme.
+\newfontfamily{\slidemint@titlefamily}[
     Scale=MatchUppercase,
     ItalicFont={Plus Jakarta Sans Italic},
     BoldFont={Plus Jakarta Sans},
@@ -29,36 +14,14 @@
     BoldItalicFeatures={Weight=700},
 ]{Plus Jakarta Sans}
 
-\setmainfont[
-    ItalicFont={Roboto Condensed Light Italic},
-    BoldFont={Roboto Condensed},
-    BoldItalicFont={Roboto Condensed Italic},
-    Ligatures=TeX,
-]{Roboto Condensed Light}
-
-\setsansfont[
-    ItalicFont={Roboto Condensed Light Italic},
-    BoldFont={Roboto Condensed},
-    BoldItalicFont={Roboto Condensed Italic},
-    Ligatures=TeX,
-]{Roboto Condensed Light}
-
-\setmonofont[
-    ItalicFont={MesloLGS NF Italic},
-    BoldFont={MesloLGS NF Bold},
-    BoldItalicFont={MesloLGS NF Bold Italic},
-    Ligatures=NoCommon,
-    Scale=MatchLowercase,
-]{MesloLGS NF}
-
-\newfontfamily{\SlidemintCodeFontFamily}[
+\newfontfamily{\slidemint@codefamily}[
     ItalicFont={MesloLGS NF Italic},
     BoldFont={MesloLGS NF Bold},
     BoldItalicFont={MesloLGS NF Bold Italic},
     Ligatures=NoCommon,
 ]{MesloLGS NF}
 
-\newfontfamily{\SlidemintQuoteFontFamily}[
+\newfontfamily{\slidemint@quotefamily}[
     Weight=500,
     ItalicFont={Plus Jakarta Sans Italic},
     ItalicFeatures={Weight=500},
@@ -68,13 +31,9 @@
     BoldItalicFeatures={Weight=700},
 ]{Plus Jakarta Sans}
 
-% By file name: given the family name, fontspec looks for a bold face and logs
-% that it cannot resolve it.
-\setmathfont{latinmodern-math.otf}
+\newcommand*{\SlidemintCodeFont}{\slidemint@codefamily\fontsize{9.75pt}{15pt}\selectfont}
 
-\newcommand*{\SlidemintCodeFont}{\SlidemintCodeFontFamily\fontsize{9.75pt}{15pt}\selectfont}
-
-\setbeamerfont{title}{family=\SlidemintTitleFontFamily,series=\mdseries}
+\setbeamerfont{title}{family=\slidemint@titlefamily,series=\mdseries}
 \setbeamerfont{subtitle}{parent=title,series=\mdseries}
 \setbeamerfont{author}{parent=subtitle,series=\mdseries}
 \setbeamerfont{institute}{parent=subtitle,series=\mdseries}
@@ -89,8 +48,8 @@
 \setbeamerfont{block title example}{parent={block title,example text}}
 
 % Verse, quotations, quotes
-\setbeamerfont{quotation}{family=\SlidemintQuoteFontFamily}
-\setbeamerfont{quote}{family=\SlidemintQuoteFontFamily}
+\setbeamerfont{quotation}{family=\slidemint@quotefamily}
+\setbeamerfont{quote}{family=\slidemint@quotefamily}
 
 % Bibliography
 \setbeamerfont{bibliography item}{size=\footnotesize}

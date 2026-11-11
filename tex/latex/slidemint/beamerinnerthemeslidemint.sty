@@ -4,18 +4,6 @@
 \RequirePackage[cachedir=_minted-\jobname]{minted}
 \RequirePackage{tikz}
 
-\newenvironment{ribbon}{\usebeamertemplate{ribbon begin}}{\usebeamertemplate{ribbon end}}
-\newcommand*{\SlidemintListBullet}{%
-    \tikz[baseline=-0.55ex]{\fill[SlidemintListMarker] (0,0) circle[radius=0.15em];}%
-}
-\newcommand*{\SlidemintRibbonListSpacing}{%
-    \setlength{\topsep}{0pt}%
-    \setlength{\partopsep}{0pt}%
-    \setlength{\parsep}{0pt}%
-    \setlength{\itemsep}{3pt}%
-    \def\@listi{\leftmargin\leftmargini\topsep0pt\partopsep0pt\parsep0pt\itemsep3pt}%
-    \let\@listI\@listi%
-}
 \setminted{
     fontsize=\SlidemintCodeFont,
     breaklines,
@@ -26,54 +14,80 @@
 \setmintedinline{
     bgcolorpadding=0pt
 }
-\SlidemintApplyMintedStyle
-\newcommand*{\SlidemintBeginAlignedBlockBody}[1]{%
-    \begin{minipage}[t][#1][t]{\linewidth}%
-        \setlength{\parindent}{0pt}%
-        \ignorespaces%
-}
-\newcommand*{\SlidemintEndAlignedBlockBody}{%
-        \unskip%
-    \end{minipage}%
-}
-\newenvironment{alignedblock}[2]{%
-    \begin{block}{\strut#2\strut}%
-    \SlidemintBeginAlignedBlockBody{#1}%
-}{%
-    \SlidemintEndAlignedBlockBody%
-    \end{block}%
-}
-\newenvironment{alignedalertblock}[2]{%
-    \begin{alertblock}{\strut#2\strut}%
-    \SlidemintBeginAlignedBlockBody{#1}%
-}{%
-    \SlidemintEndAlignedBlockBody%
-    \end{alertblock}%
-}
-\newenvironment{alignedexampleblock}[2]{%
-    \begin{exampleblock}{\strut#2\strut}%
-    \SlidemintBeginAlignedBlockBody{#1}%
-}{%
-    \SlidemintEndAlignedBlockBody%
-    \end{exampleblock}%
-}
-\mode<presentation>
+% The Pygments style of the palette's flavor.
+\begingroup
+\edef\slidemint@setmintedstyle{\endgroup\noexpand\setminted{style=\slidemint@mintedstyle}}
+\slidemint@setmintedstyle
 
-\setbeamertemplate{itemize item}{\SlidemintListBullet}
-\setbeamertemplate{itemize subitem}{\SlidemintListBullet}
-\setbeamertemplate{itemize subsubitem}{\SlidemintListBullet}
+\newcommand*{\slidemint@listbullet}{%
+    \tikz[baseline=-0.55ex]{\fill[SlidemintListMarker] (0,0) circle[radius=0.15em];}%
+}
+\setbeamertemplate{itemize item}{\slidemint@listbullet}
+\setbeamertemplate{itemize subitem}{\slidemint@listbullet}
+\setbeamertemplate{itemize subsubitem}{\slidemint@listbullet}
 
 \setbeamertemplate{enumerate item}{\textcolor{SlidemintListMarker}{\insertenumlabel.}}
 \setbeamertemplate{enumerate subitem}{\textcolor{SlidemintListMarker}{\insertsubenumlabel.}}
 \setbeamertemplate{enumerate subsubitem}{\textcolor{SlidemintListMarker}{\insertsubsubenumlabel.}}
-
-\setbeamertemplate{frametitle continuation}{}
 
 \setbeamertemplate{bibliography item}{}
 \setbeamertemplate{bibliography entry title}{\space}
 \setbeamertemplate{bibliography entry location}{\space}
 \setbeamertemplate{bibliography entry note}{\space}
 
+% The block templates of Beamer's default inner theme, with a strut around the
+% title: a title with a descender is then as tall as one without, and the
+% bodies of blocks side by side start at the same height.
+\newcommand*{\slidemint@blockbegin}[2]{%
+    \par\vskip\medskipamount%
+    \begin{beamercolorbox}[colsep*=.75ex]{#1}
+        \usebeamerfont*{#1}\strut\insertblocktitle\strut%
+    \end{beamercolorbox}\noframebreak%
+    {\parskip0pt\par}%
+    \ifbeamercolorempty[bg]{#1}
+    {}
+    {\ifbeamercolorempty[bg]{#2}{}{\nointerlineskip\vskip-0.5pt}}%
+    \usebeamerfont{#2}%
+    \begin{beamercolorbox}[colsep*=.75ex,vmode]{#2}%
+        \ifbeamercolorempty[bg]{#2}{\vskip-.25ex}{\vskip-.75ex}\vbox{}%
+}
+\setbeamertemplate{block begin}{\slidemint@blockbegin{block title}{block body}}
+\setbeamertemplate{block alerted begin}{\slidemint@blockbegin{block title alerted}{block body alerted}}
+\setbeamertemplate{block example begin}{\slidemint@blockbegin{block title example}{block body example}}
+
+% An aligned block is a block whose body is a minipage of a given height, so
+% that blocks side by side end at the same height.
+\newcommand*{\slidemint@beginalignedblockbody}[1]{%
+    \begin{minipage}[t][#1][t]{\linewidth}%
+        \setlength{\parindent}{0pt}%
+        \ignorespaces%
+}
+\newcommand*{\slidemint@endalignedblockbody}{%
+        \unskip%
+    \end{minipage}%
+}
+\newcommand*{\slidemint@newalignedblock}[2]{%
+    \newenvironment{#1}[2]{%
+        \begin{#2}{##2}%
+        \slidemint@beginalignedblockbody{##1}%
+    }{%
+        \slidemint@endalignedblockbody%
+        \end{#2}%
+    }%
+}
+\slidemint@newalignedblock{alignedblock}{block}
+\slidemint@newalignedblock{alignedalertblock}{alertblock}
+\slidemint@newalignedblock{alignedexampleblock}{exampleblock}
+
+\newenvironment{ribbon}{\usebeamertemplate{ribbon begin}}{\usebeamertemplate{ribbon end}}
+\newcommand*{\slidemint@ribbonlistspacing}{%
+    \setlength{\topsep}{0pt}%
+    \setlength{\partopsep}{0pt}%
+    \setlength{\parsep}{0pt}%
+    \setlength{\itemsep}{3pt}%
+    \def\@listi{\leftmargin\leftmargini\topsep0pt\partopsep0pt\parsep0pt\itemsep3pt}%
+    \let\@listI\@listi%
+}
 \setbeamertemplate{ribbon begin}{%
     \par\vskip\smallskipamount%
     \noindent\begin{beamercolorbox}[wd=\paperwidth,sep=0pt,vmode,leftskip=\beamer@leftmargin,rightskip=\beamer@rightmargin]{ribbon}%
@@ -82,10 +96,9 @@
         \setbeamercolor*{item}{parent=ribbon item}%
         \setbeamercolor*{item projected}{parent=ribbon item projected}%
         \setbeamercolor*{alerted text}{parent=ribbon alerted text}%
-        \SlidemintRibbonListSpacing%
+        \slidemint@ribbonlistspacing%
         \ignorespaces%
 }
-
 \setbeamertemplate{ribbon end}{%
         \unskip%
         \vskip.65em%
@@ -110,7 +123,7 @@
 {
     \begin{tikzpicture}[remember picture,overlay]
         \node[anchor=center] at (current page.center) {%
-            \begin{minipage}[c][\dimexpr\paperheight-0.1062\paperwidth-2em\relax][c]{\textwidth}
+            \begin{minipage}{\textwidth}
                 \centering
                 {\usebeamerfont{title}\usebeamercolor[fg]{title}\inserttitle\par}%
                 \ifx\insertsubtitle\@empty%
@@ -136,10 +149,7 @@
                     \vskip.5em\par
                     {\usebeamercolor[fg]{titlegraphic}\inserttitlegraphic\par}%
                 \fi%
-                \vfill
             \end{minipage}
         };
     \end{tikzpicture}
 }
-
-\mode<all>

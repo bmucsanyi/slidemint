@@ -1,8 +1,6 @@
 \NeedsTeXFormat{LaTeX2e}[2020-10-01]
 \ProvidesPackage{beamerouterthemeslidemint}[2026-05-25 v0.1.0 Slidemint outer theme]
 
-\mode<presentation>
-
 \pdfstringdefDisableCommands{\def\translate#1{#1}}
 
 \setbeamertemplate{navigation symbols}{}
@@ -40,33 +38,28 @@
 
 \setbeamertemplate{frametitle continuation}{}
 
-\setbeamertemplate{page number in head/foot}[framenumber]
-
+% One box: on the left the footer text, or the citations of the frame on one
+% line each, and on the right the frame number. The footer text stands on a
+% strut of 3ex, the height the box has with no citation; with citations the
+% box is as tall as they are.
 \defbeamertemplate*{footline}{slidemint}
 {%
     \ifbeamer@plainframe
         \global\let\slidemint@citekeys\@empty%
     \else
-        \ifx\slidemint@citekeys\@empty%
-            \begin{beamercolorbox}[wd=\paperwidth,ht=3ex,dp=1.5ex,leftskip=.3cm,rightskip=.3cm,sep=0pt]{footline}
-                \usebeamercolor[fg]{footline}%
-                \slidemintfooterleft%
-                \hfill%
-                \insertframenumber/\inserttotalframenumber%
-            \end{beamercolorbox}%
-        \else
-            \begin{beamercolorbox}[wd=\paperwidth,dp=1.5ex,leftskip=.3cm,rightskip=.3cm,sep=0pt]{footline}
-                \usebeamercolor[fg]{footline}%
+        \begin{beamercolorbox}[wd=\paperwidth,dp=1.5ex,leftskip=.3cm,rightskip=.3cm,sep=0pt]{footline}
+            \usebeamercolor[fg]{footline}%
+            \ifx\slidemint@citekeys\@empty%
+                \vrule height 3ex depth 0pt width 0pt\slidemint@footerleft%
+            \else%
                 \parbox[b]{\dimexpr\paperwidth-2.2cm\relax}{%
                     \usebeamerfont{footline}%
                     \raggedright\setlength{\parskip}{0pt}%
-                    \expandafter\slidemintfootcite\expandafter{\slidemint@citekeys}\par}%
-                \hfill%
-                \insertframenumber/\inserttotalframenumber%
-            \end{beamercolorbox}%
-        \fi
+                    \expandafter\slidemint@footcite\expandafter{\slidemint@citekeys}\par}%
+            \fi%
+            \hfill%
+            \insertframenumber/\inserttotalframenumber%
+        \end{beamercolorbox}%
         \global\let\slidemint@citekeys\@empty%
     \fi
 }
-
-\mode<all>
