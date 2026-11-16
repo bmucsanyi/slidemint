@@ -17,13 +17,16 @@
     {}
 \RequirePackage[warnings-off={mathtools-colon,mathtools-overbracket},mathrm=sym,mathbf=sym]{unicode-math}
 
-% One text face: the sans family is the main family.
+% One text face: the sans family is the main family. The names of the face and
+% of its bold face are defined once, because numbers in maths use them too.
+\newcommand*{\slidemint@textface}{Roboto Condensed Light}
+\newcommand*{\slidemint@textboldface}{Roboto Condensed}
 \setmainfont[
     ItalicFont={Roboto Condensed Light Italic},
-    BoldFont={Roboto Condensed},
+    BoldFont={\slidemint@textboldface},
     BoldItalicFont={Roboto Condensed Italic},
     Ligatures=TeX,
-]{Roboto Condensed Light}
+]{\slidemint@textface}
 \edef\sfdefault{\rmdefault}
 
 \setmonofont[
@@ -37,6 +40,16 @@
 % By file name: given the family name, fontspec looks for a bold face and logs
 % that it cannot resolve it.
 \setmathfont{latinmodern-math.otf}
+
+% A number in maths looks as it does in text: its digits, decimal point, comma,
+% and percent sign come from the text face, and under \boldmath from its bold
+% face. The comma between arguments, as in f(x, y), is the same character and
+% changes with it. The ellipses stay in Latin Modern, because the text face has
+% no centred one for \cdots.
+\setmathfont[
+    range={up/num, \mathperiod, \mathcomma, \mathpercent},
+    BoldFont={\slidemint@textboldface},
+]{\slidemint@textface}
 
 % A figure drawn by figmint is set in these fonts too.
 \AddToHook{package/figmint/after}{\figmintpreamble{\usepackage{slidemintfonts}}}
